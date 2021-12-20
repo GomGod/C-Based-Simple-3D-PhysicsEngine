@@ -15,6 +15,7 @@
 ![image](https://user-images.githubusercontent.com/46223506/146803365-e6c72aa2-a3ef-41e3-b035-a20a40540614.png)
 
 중력 시뮬레이션 결과
+1) 하나씩 삐져나온 것은 critical section 
 ***
 
 C++ Based 3D Physics Engine
