@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "94096d7a-d49e-4bc3-930a-c4844396bd1b": {
+      "ProjectGuid": "94096d7a-d49e-4bc3-930a-c4844396bd1b",
+      "DisplayName": "SimplePhysicsEngine",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
