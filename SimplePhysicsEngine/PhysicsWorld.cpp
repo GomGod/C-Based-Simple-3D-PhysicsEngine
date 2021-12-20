@@ -27,20 +27,25 @@ void PhysicsWorld::AddObject(utils::Object* obj) {
 }
 
 void PhysicsWorld::RemoveObject(utils::Object* obj) {
-    _objects.erase(remove_if(_objects.begin(), _objects.end(), obj), _objects.end());
+    _objects.erase(remove(_objects.begin(), _objects.end(), obj), _objects.end());
+}
+
+int PhysicsWorld::GetObjectsNumber()
+{
+    return _objects.size();
 }
 
 void PhysicsWorld::InitPhysics()
 {
-    
+    physicsThread = std::thread(&PhysicsWorld::threadPhysicsUpdate, this);
+    physicsThread.detach();
 }
 
 [[noreturn]] void PhysicsWorld::threadPhysicsUpdate()
-{
-    float dt = 0.3f;
+{    
     while (true)
     {
-        UpdateForces(dt);
+        UpdateForces(DELTA_TIME);
         this_thread::sleep_for(chrono::milliseconds(10));
     }
 }

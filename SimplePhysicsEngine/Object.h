@@ -11,7 +11,7 @@ namespace utils {
         utils::Vector3 Forces;
         float Mass;
 
-        Object(Vector3 pos, Vector3 rot, Vector3 velocity, float mass);
+        Object(Vector3 pos = Vector3{0,0,0}, Vector3 rot = Vector3{0,0,0}, Vector3 velocity = Vector3{ 0,0,0 }, float mass = 0);
     };
 }
 
