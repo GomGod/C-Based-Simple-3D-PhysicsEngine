@@ -9,9 +9,7 @@
 2021-12-20
 1) Physics World 구현 (중력 적용)
 2) IDE 변경 (CLion -> VS2022)
-
 ![image](https://user-images.githubusercontent.com/46223506/146803079-d0008095-24f9-426c-93df-902d14a23f9c.png
-중력 시뮬레이션 
 ***
 
 C++ Based 3D Physics Engine
