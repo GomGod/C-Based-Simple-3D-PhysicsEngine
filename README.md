@@ -15,7 +15,11 @@
 ![image](https://user-images.githubusercontent.com/46223506/146803365-e6c72aa2-a3ef-41e3-b035-a20a40540614.png)
 
 중력 시뮬레이션 결과
-1) 하나씩 삐져나온 점은 critical section 문제로 보임.
-***
+
+2021-12-21
+1) 충돌 처리 설계
+ *1-1) 전처리(정밀 충돌 검사 대상 선별)
+ *1-2) 정밀 충돌검사
+ *1-3) 충돌 오브젝트 간 반응 처리
 
 C++ Based 3D Physics Engine
