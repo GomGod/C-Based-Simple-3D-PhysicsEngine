@@ -11,7 +11,7 @@
 class PhysicsWorld {
 private:
     utils::Vector3 defaultGravity{ 0,0, -0.98f };
-    std::vector<utils::Object*> _objects;
+    std::vector<Object*> _objects;
     std::thread physicsThread;
 
     [[noreturn]] void threadPhysicsUpdate();
@@ -21,8 +21,8 @@ private:
 
 public:
     void InitPhysics();
-    void AddObject(utils::Object* obj);
-    void RemoveObject(utils::Object* obj);
+    void AddObject(Object* obj);
+    void RemoveObject(Object* obj);
     int GetObjectsNumber();
 };
 

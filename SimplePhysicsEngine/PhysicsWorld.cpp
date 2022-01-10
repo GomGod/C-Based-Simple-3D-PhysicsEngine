@@ -6,11 +6,11 @@ void PhysicsWorld::UpdateForces(float dt) {
     //adjust gravity
     for (auto obj : _objects)
     {
-        obj->Forces += defaultGravity;
-        obj->Velocity += obj->Forces / obj->Mass * dt;
-        obj->Position += obj->Velocity * dt;
+        obj->forces += defaultGravity;
+        obj->velocity += obj->forces / obj->mass * dt;
+        obj->position += obj->velocity * dt;
 
-        obj->Forces = utils::Vector3{ 0,0,0 };
+        obj->forces = utils::Vector3{ 0,0,0 };
     }
 }
 
@@ -22,11 +22,11 @@ void PhysicsWorld::AdjustConstraints()
 {
 }
 
-void PhysicsWorld::AddObject(utils::Object* obj) {
+void PhysicsWorld::AddObject(Object* obj) {
     _objects.push_back(obj);
 }
 
-void PhysicsWorld::RemoveObject(utils::Object* obj) {
+void PhysicsWorld::RemoveObject(Object* obj) {
     _objects.erase(remove(_objects.begin(), _objects.end(), obj), _objects.end());
 }
 
