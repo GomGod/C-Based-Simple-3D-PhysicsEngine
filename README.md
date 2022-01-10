@@ -25,7 +25,7 @@
 2021-12-22 ~ 2022-01-10
 물리 시뮬레이션 렌더링을 위한 OpenGL 학습
 
-2022-01-10
+2022-01-10   
 ![image](https://user-images.githubusercontent.com/46223506/148786982-a306a8da-907e-45b1-8579-57095c0ed812.png)   
 Object class의 데이터를 기반으로 구 렌더링
 
