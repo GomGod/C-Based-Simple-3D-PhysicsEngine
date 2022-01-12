@@ -29,6 +29,9 @@ Object class의 데이터를 기반으로 구 렌더링
 
 **2022-01-12**   
 ![image](https://user-images.githubusercontent.com/46223506/149158898-c2fc7524-8633-44b7-9c66-761d5a346f59.png)   
-엔진 기초 설계
+엔진 기초 설계   
+1. 메인 스레드와 물리 스레드를 분리하여 물리 연산을 별도 스레드에서 수행   
+2. 렌더링 시 Latest Object Buffer에서 데이터를 가져와 렌더링
+3. 만약 Latest Object Buffer가 업데이트 중이라면 대기
 
 C++ Based 3D Physics Engine
