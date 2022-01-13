@@ -39,7 +39,7 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsWorld.cpp">
+    <ClCompile Include="PhysicsEngine.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="glad.c">
@@ -71,7 +71,7 @@
     <ClInclude Include="main.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsWorld.h">
+    <ClInclude Include="PhysicsEngine.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Collider.h">
@@ -91,9 +91,6 @@
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>헤더 파일\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects.h">
-      <Filter>헤더 파일\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

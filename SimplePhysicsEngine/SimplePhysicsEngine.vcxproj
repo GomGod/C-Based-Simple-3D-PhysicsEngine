@@ -25,7 +25,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="PhysicsWorld.cpp" />
+    <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Vector3.cpp" />
@@ -35,8 +35,7 @@
     <ClInclude Include="ColliderSphere.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Object.h" />
-    <ClInclude Include="Objects.h" />
-    <ClInclude Include="PhysicsWorld.h" />
+    <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Shader.h" />
@@ -149,7 +148,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

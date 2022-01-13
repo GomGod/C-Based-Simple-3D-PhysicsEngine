@@ -13,6 +13,13 @@ namespace utils
         float y;
         float z;
 
+        Vector3(const Vector3& origin)
+        {
+            this->x = origin.x;
+            this->y = origin.y;
+            this->z = origin.z;
+        }
+
         explicit Vector3(float xc = 0, float yc = 0, float zc = 0);
         Vector3 operator + (Vector3& v) const;
         Vector3 operator - (Vector3& v) const;
