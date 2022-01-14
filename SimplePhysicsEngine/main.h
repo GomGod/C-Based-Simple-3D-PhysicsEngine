@@ -29,6 +29,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 //GLFW
 
 //PhysicsEngine
+void AddPlaneToPhyscisWorld(utils::Vector3 position, utils::Vector3 rotation, utils::Vector3 velocity, utils::Vector3 forces, float mass, bool usePhysics, float width, float height, Shader* shader);
 void AddSphereToPhysicsWorld(utils::Vector3 position = utils::Vector3{ 0,0,0 }, utils::Vector3 rotation = utils::Vector3{ 0,0,0 }, utils::Vector3 velocity = utils::Vector3{ 0,0,0 }, utils::Vector3 forces = utils::Vector3{ 0,0,0 }, float mass = 0, bool usePhysics = true, float radius = 1.0f, int sectorCount = 36, int stackCount = 18, Shader* shader = 0);
 utils::Vector3 zero(0, 0, 0);
 
