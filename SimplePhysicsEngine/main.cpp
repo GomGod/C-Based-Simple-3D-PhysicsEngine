@@ -53,7 +53,7 @@ int main()
 
 	defaultShader = &ourShader;
 
-	glm::vec3 lightPos(5.0f, 5.0f, 5.0f);
+	glm::vec3 lightPos(50.0f, 50.0f, 50.0f);
 	ourShader.use();	
 	ourShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 	ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
@@ -61,7 +61,7 @@ int main()
 	
 	pEngine.runPhysicsThread();
 	//add light
-	AddSphereToPhysicsWorld(utils::Vector3(lightPos.x, lightPos.y, lightPos.z), zero, zero, zero, 0.0f, false, 0.3f, 36, 18, &lightShader);
+	AddSphereToPhysicsWorld(utils::Vector3(lightPos.x, lightPos.y, lightPos.z), zero, zero, zero, 0.0f, false, 300.0f, 36, 18, &lightShader);
 		
 	//rendering loop
 	while (!glfwWindowShouldClose(window))
@@ -83,8 +83,8 @@ int main()
 
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::mat4(1.0f);	
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));	
-		projection = glm::perspective(glm::radians(camera.Zoom), (float)800 / 600, 0.1f, 100.0f);
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -30.0f));	
+		projection = glm::perspective(glm::radians(camera.Zoom), (float)800 / 600, 0.001f, 100000.0f);
 		//Camera Setting
 		
 		//Objects
@@ -105,10 +105,10 @@ int main()
 	
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-	utils::Vector3 shootVector{1.0f,1.0f,1.0f };
+	utils::Vector3 shootVector{1.0f,5.0f,1.0f };
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		AddSphereToPhysicsWorld(zero, zero, shootVector, zero, 0.5f, true, 1.0f, 36, 18, defaultShader);		
+		AddSphereToPhysicsWorld(zero, zero, shootVector, zero, 0.5f, true, 100.0f, 36, 18, defaultShader);		
 	}
 }
 

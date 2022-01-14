@@ -5,6 +5,7 @@
 #include <iostream>
 #include <chrono>
 #include <queue>
+#include <mutex>
 #include"Object.h"
 
 namespace SimplePhysicsEngine
@@ -29,23 +30,26 @@ namespace SimplePhysicsEngine
         utils::Vector3 defaultGravity{ 0,-0.098f,0 };
         std::thread physicsThread;
                 
+//critical section
         std::vector<PhysicsData> simulateBuffer;
         std::vector<Object*> latestBuffer;
-
         std::vector<Object*> waitingObjects;
         std::vector<int> waitingRemoveTargets;
-        
+//critical section
+
         int nextID=0;
 
+        std::mutex sBufferLock;
+        std::mutex lBufferLock;
+        std::mutex woBufferLock;
+        std::mutex rtBufferLock;
+
         [[noreturn]] void threadPhysicsUpdate();        
-        void checkCollision();
-        void adjustConstraints();
-        void updateLatestBuffer();
 
         void addObjectsAtWaitingQueue();
         void removeObjectsAtWaitingQueue();
 
-    public:     
+    public:           
         static PhysicsData PhysicsCopy(const Object& origin);
 
         void runPhysicsThread();
