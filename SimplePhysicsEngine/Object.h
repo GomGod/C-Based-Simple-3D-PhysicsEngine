@@ -13,20 +13,55 @@
 
 namespace SimplePhysicsEngine
 {
+    struct Transform
+    {
+        utils::Vector3 position;
+        utils::Vector3 rotation;
+
+        Transform(utils::Vector3 position = utils::Vector3{ 0, 0, 0 }, utils::Vector3 rotation = utils::Vector3{ 0, 0, 0 })
+        {
+            this->position = position;
+            this->rotation = rotation;
+        }
+    };
+
+    struct Material
+    {
+        utils::Vector3 ambient;
+        utils::Vector3 diffuse;
+        utils::Vector3 specular;
+        utils::Vector3 color;
+        Shader* shader;
+
+        Material(Shader* shader, utils::Vector3 color = utils::Vector3{ 1.0f, 1.0f, 1.0f }, utils::Vector3 ambient = utils::Vector3{ 0.5f, 0.5f, 0.5f }, utils::Vector3 diffuse = utils::Vector3{ 0.5f, 0.5f, 0.5f }, utils::Vector3 specular = utils::Vector3{ 0.5f, 0.5f, 0.5f }) :shader(shader), color(color), ambient(ambient), diffuse(diffuse), specular(specular)
+        {}
+    };
+
+    struct RigidBody
+    {
+        float mass;
+        float gravity;
+        utils::Vector3 velocity;
+        utils::Vector3 forces;
+        bool isKinematic;
+
+        RigidBody(float mass = 10.0f, float gravity = 1.0f, utils::Vector3 velocity = utils::Vector3{0,0,0}, utils::Vector3 forces= utils::Vector3{ 0,0,0 }, bool isKinematic=false) :mass(mass), gravity(gravity), velocity(velocity), forces(forces), isKinematic(isKinematic)
+        {}
+    };
+
     class Object {
     public:
         //For Manage Object
         int ID;
 
-        //Vars for physics
-        utils::Vector3 position;
-        utils::Vector3 rotation;
-        utils::Vector3 velocity;
-        utils::Vector3 forces;
-        utils::Vector3 color;
-        float mass;
+        //Vars for physics        
+        Transform* transform;
+        RigidBody* rigidBody;
+        //Vars for render
+        Material* material;
+
                
-        Object(utils::Vector3 position = utils::Vector3{0,0,0}, utils::Vector3 rotation = utils::Vector3{ 0,0,0 }, utils::Vector3 velocity = utils::Vector3{ 0,0,0 }, utils::Vector3 forces = utils::Vector3{ 0,0,0 }, float mass = 5.0f, bool usePhysics = true, Shader* shader=0) : position(position), rotation(rotation), velocity(velocity), mass(mass), usePhysics(usePhysics), shader(shader)
+        Object(Transform* transform, RigidBody* rigidBody, Material* material) : transform(transform), rigidBody(rigidBody), material(material)
         {
             VAO = 0;
             VBO = 0;
@@ -40,16 +75,14 @@ namespace SimplePhysicsEngine
             glDeleteBuffers(1, &EBO);
             glDeleteVertexArrays(1, &VAO);
         }
-                
-        void PhysicsUpdate(utils::Vector3 position, utils::Vector3 rotation, utils::Vector3 velocity, utils::Vector3 forces);
 
-        //Physics
-        bool usePhysics;
+        void Object::UpdateTranform(utils::Vector3 position, utils::Vector3 rotation);
+        void Object::UpdatePhysics(utils::Vector3 velocity, utils::Vector3 forces);
 
         //Rendering for OpenGL   
-        void setShader(Shader* shader) { this->shader = shader; }
-        Shader* getShader() { return shader; }
-        void activateShader() { shader->use(); }
+        void setShader(Shader* shader) { material->shader = shader; }
+        const Shader* getShader() const { return material->shader; }
+        void activateShader() { material->shader->use(); }
 
         const float* getVertices() const { return vertices.data(); }
         const float* getNormals() const { return normals.data(); }
@@ -77,8 +110,7 @@ namespace SimplePhysicsEngine
         std::vector<float> normals;
         std::vector<unsigned int> indices;
         std::vector<float> interleavedVertexAttrib;
-        Shader* shader;
-
+        
         void buildInterleavedVertices();
         void clearArrays();
         void addVertex(float x, float y, float z);

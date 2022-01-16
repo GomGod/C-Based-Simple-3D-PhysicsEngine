@@ -11,7 +11,7 @@ namespace SimplePhysicsEngine
 		int sectorCount;
 		int stackCount;
 
-		Sphere(utils::Vector3 position = utils::Vector3{ 0,0,0 }, utils::Vector3 rotation = utils::Vector3{ 0,0,0 }, utils::Vector3 velocity = utils::Vector3{ 0,0,0 }, utils::Vector3 forces = utils::Vector3{ 0,0,0 }, float mass = 5.0f, bool usePhysics = true, float radius = 1.0f, int sectorCount = 36, int stackCount = 18, Shader* shader = 0) : Object(position, rotation, velocity, forces, mass, usePhysics, shader)
+		Sphere(Transform* transform, RigidBody* rigidBody, Material* material, float radius = 1.0f, int sectorCount = 36, int stackCount = 18) : Object(transform, rigidBody, material)
 		{
 			this->radius = radius;
 			this->sectorCount = sectorCount;

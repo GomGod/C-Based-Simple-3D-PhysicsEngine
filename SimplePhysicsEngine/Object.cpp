@@ -1,13 +1,17 @@
 #include "Object.h"
 
 namespace SimplePhysicsEngine
-{    
-    void Object::PhysicsUpdate(utils::Vector3 position, utils::Vector3 rotation, utils::Vector3 velocity, utils::Vector3 forces)
+{   
+    void Object::UpdateTranform(utils::Vector3 position, utils::Vector3 rotation)
     {
-        this->position = position;
-        this->rotation = rotation;
-        this->velocity = velocity;
-        this->forces = forces;
+        transform->position = position;
+        transform->rotation = rotation;
+    }
+
+    void Object::UpdatePhysics(utils::Vector3 velocity, utils::Vector3 forces)
+    {        
+        rigidBody->velocity = velocity;
+        rigidBody->forces = forces;
     }
 
     void Object::buildInterleavedVertices()
@@ -120,13 +124,18 @@ namespace SimplePhysicsEngine
     {
         activateShader();
         glBindVertexArray(VAO);
+        auto shader = getShader();
 
         shader->setVec3("viewPos", cameraPos.x, cameraPos.y, cameraPos.z);
         shader->setMat4("view", view);
         shader->setMat4("projection", projection);
-
+        shader->setVec3("material.ambient", material->ambient.x, material->ambient.y, material->ambient.z);
+        shader->setVec3("material.diffuse", material->diffuse.x, material->diffuse.y, material->diffuse.z);
+        shader->setVec3("material.specular", material->specular.x, material->specular.y, material->specular.z);
+        shader->setVec3("material.color", material->color.x, material->color.y, material->color.z);
         glm::mat4 model = glm::mat4(1.0);        
-        model = glm::translate(model, glm::vec3(position.x, position.y, position.z));
+
+        model = glm::translate(model, glm::vec3(transform->position.x, transform->position.y, transform->position.z));
        // model = glm::rotate(model, glm::radians(1.0f), glm::vec3(rotation.x, rotation.y, rotation.z));
         shader->setMat4("model", model);
 

@@ -8,7 +8,7 @@ namespace SimplePhysicsEngine
         sBufferLock.lock();
         for (auto i=0; i < simulateBuffer.size(); i+=1)
         {            
-            if (simulateBuffer[i].ignore) continue;
+            if (simulateBuffer[i].isKinematic) continue;
             simulateBuffer[i].forces += defaultGravity;                        
             simulateBuffer[i].velocity += simulateBuffer[i].forces / simulateBuffer[i].mass * dt;
             simulateBuffer[i].position += simulateBuffer[i].velocity * dt;
@@ -16,11 +16,12 @@ namespace SimplePhysicsEngine
             simulateBuffer[i].forces.y = 0;
             simulateBuffer[i].forces.z = 0;
         }   
-
         lBufferLock.lock();
+
         for (auto i = 0; i < latestBuffer.size(); ++i)
         {
-            latestBuffer[i]->PhysicsUpdate(simulateBuffer[i].position, simulateBuffer[i].rotation, simulateBuffer[i].velocity, simulateBuffer[i].forces);
+            latestBuffer[i]->UpdatePhysics(simulateBuffer[i].velocity, simulateBuffer[i].forces);
+            latestBuffer[i]->UpdateTranform(simulateBuffer[i].position, simulateBuffer[i].rotation);
         }
         sBufferLock.unlock();
         lBufferLock.unlock();
@@ -103,7 +104,7 @@ namespace SimplePhysicsEngine
         {
             clock_t currentfr = clock();
             dt = (float)(currentfr - lastfr) * 0.0001f;
-            lastfr = currentfr;                        
+            lastfr = currentfr;   
             removeObjectsAtWaitingQueue();
             addObjectsAtWaitingQueue();
             updatePhysics(0.1f);
@@ -113,13 +114,9 @@ namespace SimplePhysicsEngine
 
     PhysicsData PhysicsEngine::PhysicsCopy(const Object& origin)
     {
-        utils::Vector3 pos(origin.position);
-        utils::Vector3 rot(origin.rotation);
-        utils::Vector3 vel(origin.velocity);
-        utils::Vector3 force(origin.forces);
-        float mass = origin.mass;
-        bool usePhy = origin.usePhysics;
+        const Transform* tf{ origin.transform };
+        const RigidBody* rb{ origin.rigidBody };
                 
-        return SimplePhysicsEngine::PhysicsData(pos, rot, vel, force, mass, !usePhy);
+        return SimplePhysicsEngine::PhysicsData(tf->position, tf->rotation, rb->velocity, rb->forces, rb->mass, rb->isKinematic);
     }
 }

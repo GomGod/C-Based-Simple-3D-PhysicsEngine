@@ -17,10 +17,10 @@ namespace SimplePhysicsEngine
         utils::Vector3 velocity;
         utils::Vector3 forces;
         float mass;
-        bool ignore;
+        bool isKinematic;
 
-        PhysicsData(utils::Vector3 position, utils::Vector3 rotation, utils::Vector3 velocity, utils::Vector3 forces, float mass, bool ignore)
-            :position(position), rotation(rotation), velocity(velocity), forces(forces), mass(mass), ignore(ignore)
+        PhysicsData(utils::Vector3 position, utils::Vector3 rotation, utils::Vector3 velocity, utils::Vector3 forces, float mass, bool isKinematic)
+            :position(position), rotation(rotation), velocity(velocity), forces(forces), mass(mass), isKinematic(isKinematic)
         {}        
     };
 
@@ -35,7 +35,6 @@ namespace SimplePhysicsEngine
         std::vector<Object*> latestBuffer;
         std::vector<Object*> waitingObjects;
         std::vector<int> waitingRemoveTargets;
-//critical section
 
         int nextID=0;
 
