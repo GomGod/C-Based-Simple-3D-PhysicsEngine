@@ -34,7 +34,7 @@ Object class의 데이터를 기반으로 구 렌더링
 2. 렌더링 시 Latest Object Buffer에서 데이터를 가져와 렌더링
 3. 만약 Latest Object Buffer가 업데이트 중이라면 대기
 
-**2022-01-14**
+**2022-01-14**   
 ![zx](https://user-images.githubusercontent.com/46223506/149777949-838147f0-79d1-4ea5-b2aa-3aea06e384be.gif)   
 구 오브젝트, 평면 오브젝트 렌더링 및 중력 시뮬레이션   
 
