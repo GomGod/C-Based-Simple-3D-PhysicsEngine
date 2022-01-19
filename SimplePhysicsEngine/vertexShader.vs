@@ -10,9 +10,9 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main()
-{
-	vec3 nPos = aPos/ 100.0f;
+{	
 	Normal = aNormal;	
-	gl_Position = projection * view * model * vec4(nPos, 1.0);
-	VertexPos = vec3(model * vec4(nPos, 1.0));
+
+	gl_Position = projection * view * model * vec4(aPos, 1.0);
+	VertexPos = vec3(model * vec4(aPos, 1.0));
 }

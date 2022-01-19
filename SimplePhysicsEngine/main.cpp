@@ -1,4 +1,5 @@
 #include"main.h"
+#include<Windows.h>
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -53,7 +54,7 @@ int main()
 
 	defaultShader = &ourShader;
 
-	glm::vec3 lightPos(50.0f, 50.0f, 50.0f);
+	glm::vec3 lightPos(5.0f, 5.0f, 5.0f);
 	ourShader.use();	
 	ourShader.setVec3("light.lightColor", 1.0f, 1.0f, 1.0f);
 	ourShader.setVec3("light.lightPos", lightPos.x, lightPos.y, lightPos.z);
@@ -63,14 +64,15 @@ int main()
 	SimplePhysicsEngine::Transform* transform = new SimplePhysicsEngine::Transform(utils::Vector3(lightPos.x, lightPos.y, lightPos.z));
 	SimplePhysicsEngine::RigidBody* rigidBody = new SimplePhysicsEngine::RigidBody(10.0f, 0.0f, zero, zero, true);
 	SimplePhysicsEngine::Material* material = new SimplePhysicsEngine::Material(&lightShader);	
-	AddSphereToPhysicsWorld(transform, rigidBody, material, 100.0f, 36, 18);
+	AddSphereToPhysicsWorld(transform, rigidBody, material, 1.0f, 36, 18);
 
 	//add plane(ground)
 	transform = new SimplePhysicsEngine::Transform(utils::Vector3(0,-30.0f, 0));
 	rigidBody = new SimplePhysicsEngine::RigidBody(10.0f, 0.0f, zero, zero, true);
 	material = new SimplePhysicsEngine::Material(defaultShader, utils::Vector3::Normalize(utils::Vector3(70, 70, 70)));
-	AddPlaneToPhyscisWorld(transform, rigidBody, material, 10000.0f, 10000.0f);
+	AddPlaneToPhyscisWorld(transform, rigidBody, material, 100.0f, 100.0f, 1.0f);
 
+	
 	//rendering loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -88,6 +90,9 @@ int main()
 		float radius = 20.0f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
+
+		//cout << "\x1B[2J\x1B[H";
+		//cout << "(" <<camera.Position.x<< ","<< camera.Position.y << ","<< camera.Position.z << ")" << endl;
 
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::mat4(1.0f);
@@ -119,7 +124,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		SimplePhysicsEngine::RigidBody* rigidBody = new SimplePhysicsEngine::RigidBody();
 		SimplePhysicsEngine::Material* material = new SimplePhysicsEngine::Material(defaultShader, utils::Vector3(0.8f, 0.1f, 0.1f));
 		rigidBody->velocity = utils::Vector3(0.25f, 0.5f, 0.25f);
-		AddSphereToPhysicsWorld(transform, rigidBody, material, 50.0f, 36, 18);
+		AddSphereToPhysicsWorld(transform, rigidBody, material, 0.5f, 36, 18);
 	}
 }
 
@@ -176,8 +181,8 @@ void AddSphereToPhysicsWorld(SimplePhysicsEngine::Transform* transform, SimplePh
 	pEngine.addObject(newSphere);
 }
 
-void AddPlaneToPhyscisWorld(SimplePhysicsEngine::Transform* transform, SimplePhysicsEngine::RigidBody* rigidBody, SimplePhysicsEngine::Material* material, float width, float height)
+void AddPlaneToPhyscisWorld(SimplePhysicsEngine::Transform* transform, SimplePhysicsEngine::RigidBody* rigidBody, SimplePhysicsEngine::Material* material, float width, float height, float thickness)
 {
-	SimplePhysicsEngine::Plane* newPlane = new SimplePhysicsEngine::Plane(transform, rigidBody, material, width, height);
+	SimplePhysicsEngine::Plane* newPlane = new SimplePhysicsEngine::Plane(transform, rigidBody, material, width, height, thickness);
 	pEngine.addObject(newPlane);
 }
