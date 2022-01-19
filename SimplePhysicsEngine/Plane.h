@@ -1,4 +1,6 @@
-#ifndef SIMPLEPHYSICSENGINE_SPHERE_H
+#pragma once
+#ifndef SIMPLEPHYSICSENGINE_PLANE_H
+#define SIMPLEPHYSICSENGINE_PLANE_H
 #include "Object.h"
 #include "PhysicsEngine.h"
 
@@ -12,9 +14,11 @@ namespace SimplePhysicsEngine
 	public:
 		float width;
 		float height;
+		float thickness;
 
-		Plane(Transform* transform, RigidBody* rigidBody, Material* material, float width=50.0f,float height=50.0f) : Object(transform, rigidBody, material)
+		Plane(Transform* transform, RigidBody* rigidBody, Material* material, float width=50.0f,float height=50.0f, float thickness = 10.0f) : Object(transform, rigidBody, material)
 		{		
+			this->thickness = thickness;
 			this->width = width;
 			this->height = height;
 			buildVertices();
@@ -24,6 +28,6 @@ namespace SimplePhysicsEngine
 	};
 }
 
-#endif // !SPHERE_H
+#endif
 
 

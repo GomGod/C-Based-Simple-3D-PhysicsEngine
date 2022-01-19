@@ -6,22 +6,34 @@
 #include <chrono>
 #include <queue>
 #include <mutex>
-#include"Object.h"
+
+#include "Object.h"
+#include "MeshCollider.h"
+#include "Simplex.h"
 
 namespace SimplePhysicsEngine
-{
+{   
     struct PhysicsData
     {
         utils::Vector3 position;
         utils::Vector3 rotation;
         utils::Vector3 velocity;
         utils::Vector3 forces;
+        AABB aabb;
+        MeshCollider collider;
+
         float mass;
         bool isKinematic;
 
-        PhysicsData(utils::Vector3 position, utils::Vector3 rotation, utils::Vector3 velocity, utils::Vector3 forces, float mass, bool isKinematic)
-            :position(position), rotation(rotation), velocity(velocity), forces(forces), mass(mass), isKinematic(isKinematic)
+        PhysicsData(utils::Vector3 position, utils::Vector3 rotation, utils::Vector3 velocity, utils::Vector3 forces, MeshCollider collider, AABB aabb, float mass, bool isKinematic)
+            :position(position), rotation(rotation), velocity(velocity), forces(forces), mass(mass), isKinematic(isKinematic), collider(collider), aabb(aabb)
         {}        
+    };
+
+    struct Collisions
+    {
+        int aInd;
+        int bInd;
     };
 
     class PhysicsEngine 
@@ -47,6 +59,18 @@ namespace SimplePhysicsEngine
 
         void addObjectsAtWaitingQueue();
         void removeObjectsAtWaitingQueue();
+
+        //test
+        void PreDetectCollision();
+        void SecondDetectCollision();
+
+        bool GJK(const MeshCollider* colliderA, utils::Vector3 posA, const MeshCollider* colliderB, utils::Vector3 posB);
+        utils::Vector3 Support(const MeshCollider* colliderA, const MeshCollider* colliderB, utils::Vector3 dir);
+        bool NextSimplex(Simplex& points, utils::Vector3& dir);
+        bool SameDirection(const utils::Vector3& dir, const utils::Vector3 ao);
+        bool Line(Simplex& points, utils::Vector3& dir);
+        bool Triangle(Simplex& points, utils::Vector3& dir);
+        bool Tetrahedron(Simplex& points, utils::Vector3& dir);
 
     public:           
         static PhysicsData PhysicsCopy(const Object& origin);

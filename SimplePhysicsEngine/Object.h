@@ -1,7 +1,9 @@
+#pragma once
 #ifndef SIMPLEPHYSICSENGINE_OBJECT_H
 #define SIMPLEPHYSICSENGINE_OBJECT_H
 #include "Vector3.h"
 #include "Shader.h"
+#include "MeshCollider.h"
 
 #include "glad/glad.h"		
 #include "GLFW/glfw3.h" 
@@ -13,6 +15,38 @@
 
 namespace SimplePhysicsEngine
 {
+    struct AABB
+    {
+        float minX, maxX;
+        float minY, maxY;
+        float minZ, maxZ;
+
+        bool TestAABBCollision(const utils::Vector3& point)
+        {
+            return (minX < point.x && point.x < maxX) &&
+                (minY < point.y && point.y < maxY) &&
+                (minZ < point.z && point.z < maxZ);
+        }
+
+        bool TestAABBCollision(const AABB& box)
+        {   
+            if (maxX < box.minX || minX > box.maxX) return false;
+            if (maxY < box.minY || minY > box.maxY) return false;
+            if (maxZ < box.minZ || minZ > box.maxZ) return false;
+            return true;        
+        }
+
+        AABB& operator+ (const utils::Vector3& pos)
+        {
+            return AABB{ minX + pos.x, maxX + pos.x, minY + pos.y, maxY + pos.y, minZ + pos.z, maxZ + pos.z };
+        }
+
+        AABB& operator& (const AABB& origin)
+        {
+            return AABB{ origin.minX , origin.maxX , origin.minY , origin.maxY , origin.minZ, origin.maxZ };
+        }
+    };
+
     struct Transform
     {
         utils::Vector3 position;
@@ -57,12 +91,17 @@ namespace SimplePhysicsEngine
         //Vars for physics        
         Transform* transform;
         RigidBody* rigidBody;
+        MeshCollider* collider;
+        AABB* aabb;
+
         //Vars for render
         Material* material;
 
                
         Object(Transform* transform, RigidBody* rigidBody, Material* material) : transform(transform), rigidBody(rigidBody), material(material)
         {
+            collider = new MeshCollider;            
+            aabb = new AABB;
             VAO = 0;
             VBO = 0;
             EBO = 0;
@@ -74,6 +113,10 @@ namespace SimplePhysicsEngine
             glDeleteBuffers(1, &VBO);
             glDeleteBuffers(1, &EBO);
             glDeleteVertexArrays(1, &VAO);
+            delete transform;
+            delete rigidBody;
+            delete material;
+            delete aabb;
         }
 
         void Object::UpdateTranform(utils::Vector3 position, utils::Vector3 rotation);
@@ -123,6 +166,6 @@ namespace SimplePhysicsEngine
         void buildVAO();
         unsigned int VAO, VBO, EBO;
     };
-}
+};
 
 #endif //SIMPLEPHYSICSENGINE_OBJECT_H

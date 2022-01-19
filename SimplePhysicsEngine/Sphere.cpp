@@ -8,7 +8,7 @@ namespace SimplePhysicsEngine
 
         struct Vertex
         {
-            float x, y, z, s, t;
+            float x, y, z;
         };
         std::vector<Vertex> tmpVertices;
 
@@ -16,27 +16,62 @@ namespace SimplePhysicsEngine
         float stackStep = PI / stackCount;
         float sectorAngle, stackAngle;
 
+        float maxX = 0, minX = 0, maxY = 0, minY = 0, maxZ = 0, minZ = 0;
+
         for (int i = 0; i <= stackCount; ++i)
         {
             stackAngle = PI / 2 - i * stackStep;
-            float xy = radius * cosf(stackAngle);
-            float z = radius * sinf(stackAngle);
+            float xz = radius * cosf(stackAngle);
+            float y = radius * sinf(stackAngle);
 
             for (int j = 0; j <= sectorCount; ++j)
             {
                 sectorAngle = j * sectorStep;
 
                 Vertex vertex;
-                vertex.x = xy * cosf(sectorAngle);
-                vertex.y = xy * sinf(sectorAngle);
-                vertex.z = z;
-                vertex.s = (float)j / sectorCount;
-                vertex.t = (float)i / stackCount;
+                vertex.x = xz * cosf(sectorAngle);
+                vertex.y = y;
+                vertex.z = xz * sinf(sectorAngle);
+
                 tmpVertices.push_back(vertex);
+                
+                if (maxX < vertex.x)
+                {
+                    maxX = vertex.x;
+                }
+                if (minX > vertex.x)
+                {
+                    minX = vertex.x;
+                }                
+
+                if (maxY < vertex.y)
+                {
+                    maxY = vertex.y;
+                }
+                if (minY > vertex.y)
+                {
+                    minY = vertex.y;
+                }
+
+                if (maxZ < vertex.z)
+                {
+                    maxZ = vertex.z;
+                }
+                if (minZ > vertex.z)
+                {
+                    minZ = vertex.z;
+                }
             }
         }
 
-        clearArrays();
+        aabb->minX = minX;
+        aabb->maxX = maxX;
+        aabb->minY = minY;
+        aabb->maxY = maxY;
+        aabb->minZ = minZ;
+        aabb->maxZ = maxZ;
+
+        clearArrays();        
 
         Vertex v1, v2, v3, v4;
         std::vector<float> n;
@@ -63,6 +98,7 @@ namespace SimplePhysicsEngine
                     addVertex(v1.x, v1.y, v1.z);
                     addVertex(v2.x, v2.y, v2.z);
                     addVertex(v4.x, v4.y, v4.z);
+
 
                     n = getFaceNormal(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v4.x, v4.y, v4.z);
                     for (k = 0; k < 3; ++k)
@@ -109,8 +145,7 @@ namespace SimplePhysicsEngine
                     index += 4;
                 }
             }
-        }
-
+        }                
         buildInterleavedVertices();
     }
 }

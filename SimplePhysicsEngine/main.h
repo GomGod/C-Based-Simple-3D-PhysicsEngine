@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SIMPLEPHYSICSENGINE_MAIN_H
 #define SIMPLEPHYSICSENGINE_MAIN_H
 #define STB_IMAGE_IMPLEMENTATION
@@ -29,7 +30,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 //GLFW
 
 //PhysicsEngine
-void AddPlaneToPhyscisWorld(SimplePhysicsEngine::Transform* transform, SimplePhysicsEngine::RigidBody* rigidBody, SimplePhysicsEngine::Material* material, float width, float height);
+void AddPlaneToPhyscisWorld(SimplePhysicsEngine::Transform* transform, SimplePhysicsEngine::RigidBody* rigidBody, SimplePhysicsEngine::Material* material, float width, float height, float thickness);
 void AddSphereToPhysicsWorld(SimplePhysicsEngine::Transform* transform, SimplePhysicsEngine::RigidBody* rigidBody, SimplePhysicsEngine::Material* material, float radius, int sectorCount, int stackCount);
 utils::Vector3 zero(0, 0, 0);
 

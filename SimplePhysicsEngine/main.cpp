@@ -90,10 +90,7 @@ int main()
 		float radius = 20.0f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
-
-		//cout << "\x1B[2J\x1B[H";
-		//cout << "(" <<camera.Position.x<< ","<< camera.Position.y << ","<< camera.Position.z << ")" << endl;
-
+		
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::mat4(1.0f);
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -30.0f));

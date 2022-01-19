@@ -31,6 +31,7 @@ namespace SimplePhysicsEngine
             interleavedVertexAttrib.push_back(normals[i + 2]);
         }
 
+        collider->BuildColliderVertices(vertices.data(), getVertexCount());
         buildVAO();
     }
 
@@ -133,12 +134,12 @@ namespace SimplePhysicsEngine
         shader->setVec3("material.diffuse", material->diffuse.x, material->diffuse.y, material->diffuse.z);
         shader->setVec3("material.specular", material->specular.x, material->specular.y, material->specular.z);
         shader->setVec3("material.color", material->color.x, material->color.y, material->color.z);
-        glm::mat4 model = glm::mat4(1.0);        
+        glm::mat4 model = glm::mat4(1.0);
 
         model = glm::translate(model, glm::vec3(transform->position.x, transform->position.y, transform->position.z));
-       // model = glm::rotate(model, glm::radians(1.0f), glm::vec3(rotation.x, rotation.y, rotation.z));
+       //model = glm::rotate(model, glm::radians(1.0f), glm::vec3(rotation.x, rotation.y, rotation.z));
         shader->setMat4("model", model);
 
         glDrawElements(GL_TRIANGLES, getIndexCount(), GL_UNSIGNED_INT, (void*)0);
-    }
+    }    
 }

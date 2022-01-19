@@ -22,24 +22,21 @@
     <Filter Include="소스 파일\Object">
       <UniqueIdentifier>{323a2571-9084-4dbe-93d7-c275e0dda1ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Component">
-      <UniqueIdentifier>{dd036cfd-f9fb-4b12-b02f-8ab4084b1e4f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Component">
-      <UniqueIdentifier>{f406ff29-f66e-4678-af4d-4ec13fd92162}</UniqueIdentifier>
-    </Filter>
     <Filter Include="헤더 파일\Object">
       <UniqueIdentifier>{aaadfbb9-7228-4fc6-b46a-1e32e8f68911}</UniqueIdentifier>
     </Filter>
     <Filter Include="헤더 파일\Utils">
       <UniqueIdentifier>{33dfadb4-5bad-4eef-b72c-cd922cfcf12e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Collision">
+      <UniqueIdentifier>{dd036cfd-f9fb-4b12-b02f-8ab4084b1e4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Collision">
+      <UniqueIdentifier>{f406ff29-f66e-4678-af4d-4ec13fd92162}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsEngine.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="glad.c">
@@ -54,12 +51,6 @@
     <ClCompile Include="Sphere.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>소스 파일\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="ColliderSphere.cpp">
-      <Filter>소스 파일\Component</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.h">
       <Filter>헤더 파일\Utils</Filter>
     </ClCompile>
@@ -69,19 +60,19 @@
     <ClCompile Include="Plane.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
+    <ClCompile Include="PhysicsEngine.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshCollider.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Simplex.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsEngine.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.h">
-      <Filter>헤더 파일\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="ColliderSphere.h">
-      <Filter>헤더 파일\Component</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>헤더 파일\Object</Filter>
@@ -100,6 +91,15 @@
     </ClInclude>
     <ClInclude Include="Objects.h">
       <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsEngine.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshCollider.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Simplex.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
