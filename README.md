@@ -34,4 +34,14 @@ Object class의 데이터를 기반으로 구 렌더링
 2. 렌더링 시 Latest Object Buffer에서 데이터를 가져와 렌더링
 3. 만약 Latest Object Buffer가 업데이트 중이라면 대기
 
+**2022-01-14**   
+![zx](https://user-images.githubusercontent.com/46223506/149777949-838147f0-79d1-4ea5-b2aa-3aea06e384be.gif)   
+구 오브젝트, 평면 오브젝트 렌더링 및 중력 시뮬레이션   
+
+**2022-01-15**  
+충돌 처리 기초 설계   
+1. AABB로 충돌 검사 대상 추리기
+2. GJK 알고리즘을 활용하여 정밀 검사
+3. EPA 알고리즘을 활용하여 충돌 정보 획득 후 오브젝트의 정보 수정   
+
 C++ Based 3D Physics Engine
