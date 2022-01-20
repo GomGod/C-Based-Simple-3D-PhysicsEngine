@@ -54,6 +54,6 @@ Object class의 데이터를 기반으로 구 렌더링
 Position Solver, Impulse Solver 적용   
 
 ###### !Issue
-1. Frame drop - 오브젝트가 조금만 늘어도 프레임드랍이 굉장히 심함. mutex 문제로 추정됨   
+1. Frame drop - 오브젝트가 조금만 늘어도 프레임드랍이 굉장히 심함.
 
 C++ Based 3D Physics Engine
