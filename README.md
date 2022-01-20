@@ -50,7 +50,7 @@ Object class의 데이터를 기반으로 구 렌더링
 
 **2022-01-20**   
 충돌 정보 획득 및 충돌 반응 테스트
-![asdf](https://user-images.githubusercontent.com/46223506/150351992-242cd0c8-e880-4223-be5f-78172e47ac41.gif)   
+![asdf](https://user-images.githubusercontent.com/46223506/150374570-2db3113c-70b0-41c0-8f9b-a68a55a10b27.gif)   
 Position Solver, Impulse Solver 적용   
 
 ###### !Issue
