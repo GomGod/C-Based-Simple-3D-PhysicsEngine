@@ -5,9 +5,23 @@ using namespace std;
 
 namespace SimplePhysicsEngine
 {
+    vector<CollisionPoints> collisionInfos;
+    std::vector<Collisions> collisions;
+
     void PhysicsEngine::updatePhysics(float dt) {
-        //adjust gravity
+        //collision detection (test)
         sBufferLock.lock();
+        PreDetectCollision();
+        SecondDetectCollision();
+        
+        //resolve collisions
+        if (collisionInfos.size())
+        {
+            PositionSolver(dt);
+            ImpulseSolver(dt);
+        }
+        
+        //adjust gravity        
         for (auto i=0; i < simulateBuffer.size(); i+=1)
         {            
             if (simulateBuffer[i].isKinematic) continue;
@@ -19,22 +33,17 @@ namespace SimplePhysicsEngine
             simulateBuffer[i].forces.y = 0;
             simulateBuffer[i].forces.z = 0;
         }   
-        lBufferLock.lock();
 
+        //update latestBuffer
+        lBufferLock.lock();
         for (auto i = 0; i < latestBuffer.size(); ++i)
         {
             latestBuffer[i]->UpdatePhysics(simulateBuffer[i].velocity, simulateBuffer[i].forces);
             latestBuffer[i]->UpdateTranform(simulateBuffer[i].position, simulateBuffer[i].rotation);
         }
 
-        lBufferLock.unlock();
-
-
-        //collision detection (test)
-        PreDetectCollision();
-        SecondDetectCollision();
-
-        sBufferLock.unlock();       
+        sBufferLock.unlock();
+        lBufferLock.unlock();               
     }
 
     void PhysicsEngine::addObjectsAtWaitingQueue()
@@ -85,9 +94,6 @@ namespace SimplePhysicsEngine
         rtBufferLock.unlock();
     }
 
-    std::vector<Collisions> collisions;
-    std::vector<Collisions> finalResultCollisions;
-
     void PhysicsEngine::PreDetectCollision()
     {
         vector<Collisions>().swap(collisions); // clear
@@ -107,16 +113,17 @@ namespace SimplePhysicsEngine
         }
         auto precolCnt = collisions.size();
     }
-
+        
     void PhysicsEngine::SecondDetectCollision()
-    {
-        vector<Collisions>().swap(finalResultCollisions);        
-        for (auto i=0; i<collisions.size(); ++i)
+    {   
+        for (auto i = 0; i < collisions.size(); ++i)
         {
-            if (GJK(&simulateBuffer[collisions[i].aInd].collider, simulateBuffer[collisions[i].aInd].position,  
+            if (GJK(&simulateBuffer[collisions[i].aInd].collider, simulateBuffer[collisions[i].aInd].position,
                 &simulateBuffer[collisions[i].bInd].collider, simulateBuffer[collisions[i].bInd].position))
             {
-                finalResultCollisions.push_back(collisions[i]);                
+                auto& colData = collisionInfos.back();
+                colData.aInd = collisions[i].aInd;
+                colData.bInd = collisions[i].bInd;
             }
         }
     }
@@ -152,10 +159,11 @@ namespace SimplePhysicsEngine
             lastfr = currentfr;   
             removeObjectsAtWaitingQueue();
             addObjectsAtWaitingQueue();
-            updatePhysics(0.1f);            
+            updatePhysics(0.1f);
             std::this_thread::sleep_for(std::chrono::microseconds(10));
         }
     }
+        
 
     PhysicsData PhysicsEngine::PhysicsCopy(const Object& origin)
     {
@@ -163,10 +171,12 @@ namespace SimplePhysicsEngine
         const RigidBody* rb{ origin.rigidBody };
 
         return SimplePhysicsEngine::PhysicsData(tf->position, tf->rotation, rb->velocity, rb->forces, MeshCollider(*origin.collider), AABB(*origin.aabb), rb->mass, rb->isKinematic);
-    }
+    }    
 
     bool PhysicsEngine::GJK(const MeshCollider* colliderA, utils::Vector3 posA , const MeshCollider* colliderB, utils::Vector3 posB)
     {
+        vector<CollisionPoints>().swap(collisionInfos);
+
         utils::Vector3 dir = utils::Vector3{ 1,0,0 };
                 
         auto wposColliderA = *colliderA + posA;
@@ -183,15 +193,15 @@ namespace SimplePhysicsEngine
         {
             support = Support(&wposColliderA, &wposColliderB, dir);                        
             if (utils::Vector3::DotProduct(support, dir) <= 0)
-            {
-                cout << "aabb paseed but does not collide.\n";
+            {              
                 return false;
             }
             points.push(support);
             
             if (NextSimplex(points, dir))
-            {               
-                cout << "collision!\n";
+            {
+                auto collisionData = EPA(points, &wposColliderA, &wposColliderB);                
+                collisionInfos.emplace_back(collisionData);                
                 return true;
             }
         }
@@ -319,5 +329,201 @@ namespace SimplePhysicsEngine
         }
 
         return true;
+    }
+
+
+    CollisionPoints PhysicsEngine::EPA(const Simplex& simplex, const MeshCollider* colliderA, const MeshCollider* colliderB)
+    {
+        std::vector<utils::Vector3> polytope(simplex.begin(), simplex.end());
+        std::vector<size_t> faces =
+        {
+            0,1,2,
+            0,3,1,
+            0,2,3,
+            1,3,2
+        }; //사면체 각 면의 polygon draw 순서
+
+        auto faceNormalData = GetFaceNormals(polytope, faces);        
+        auto normals = faceNormalData.first;
+        auto minFace = faceNormalData.second;
+
+        utils::Vector3 minNormal;
+        float minDistance = FLT_MAX;
+
+        size_t iterations = 0;
+        while (minDistance == FLT_MAX)
+        {
+            minNormal = normals[minFace].xyz();
+            minDistance = normals[minFace].w;
+
+            if (iterations++ > 32)
+            {
+                break;
+            }
+
+            utils::Vector3 support = Support(colliderA, colliderB, minNormal);
+            float sDist = utils::Vector3::DotProduct(minNormal, support);
+
+            if (abs(sDist - minDistance) > 0.001f)
+            {
+                minDistance = FLT_MAX;
+                std::vector<std::pair<size_t, size_t>> uniqueEdges;
+
+                for (size_t i = 0; i < normals.size(); ++i)
+                {
+                    if (SameDirection(normals[i], support))
+                    {
+                        size_t f = i * 3;
+
+                        AddIfUniqueEdge(uniqueEdges, faces, f, f + 1);
+                        AddIfUniqueEdge(uniqueEdges, faces, f + 1, f + 2);
+                        AddIfUniqueEdge(uniqueEdges, faces, f + 2, f);
+
+                        faces[f + 2] = faces.back(); faces.pop_back();
+                        faces[f + 1] = faces.back(); faces.pop_back();
+                        faces[f] = faces.back(); faces.pop_back();
+
+                        normals[i] = normals.back(); normals.pop_back();
+
+                        i--;
+                    }
+                }
+
+                if (uniqueEdges.size() == 0) 
+                {
+                    break;
+                }
+
+                std::vector<size_t> newFaces;
+                for (auto& uEdgeData : uniqueEdges)
+                {
+                    newFaces.push_back(uEdgeData.first);
+                    newFaces.push_back(uEdgeData.second);
+                    newFaces.push_back(polytope.size());
+                }
+                polytope.push_back(support);
+
+                auto pfNormalData = GetFaceNormals(polytope, newFaces);
+                auto newNormals = pfNormalData.first;
+                auto newMinFace = pfNormalData.second;
+
+                float oldMinDist = FLT_MAX;
+                for (size_t i = 0; i < normals.size(); i += 1)
+                {
+                    if (normals[i].w < oldMinDist)
+                    {
+                        oldMinDist = normals[i].w;
+                        minFace = i;
+                    }
+                }
+
+                if (newNormals[newMinFace].w < oldMinDist)
+                {
+                    minFace = newMinFace + normals.size();
+                }
+
+                faces.insert(faces.end(), newFaces.begin(), newFaces.end());
+                normals.insert(normals.end(), newNormals.begin(), newNormals.end());
+            }
+        }
+
+        CollisionPoints points;
+
+        points.normal = minNormal;
+        points.depth = minDistance + 0.001f;
+        points.hasCollision = true;
+
+        return points;
+    }
+
+    std::pair<std::vector<utils::Vector4>, size_t> PhysicsEngine::GetFaceNormals(const std::vector<utils::Vector3>& polytope, const std::vector<size_t>& faces)
+    {
+        std::vector<utils::Vector4> normals;
+        size_t minTriangle = 0;
+        float minDistance = FLT_MAX;
+
+        for (size_t i = 0; i < faces.size(); i += 3)
+        {
+            auto a = polytope[faces[i]];
+            auto b = polytope[faces[i+1]];
+            auto c = polytope[faces[i+2]];
+
+            auto cross = utils::Vector3::CrossProduct((b - a), (c - a));
+            auto normal = utils::Vector3::Normalize(cross);
+            float dist = utils::Vector3::DotProduct(normal, a);
+
+            if (dist < 0)
+            {
+                normal *= -1;
+                dist *= -1;
+            }
+
+            auto normalWithDist = utils::Vector4();
+            normalWithDist.x = normal.x;
+            normalWithDist.y = normal.y;
+            normalWithDist.z = normal.z;
+            normalWithDist.w = dist;
+            normals.emplace_back(normalWithDist);
+
+            if (dist < minDistance)
+            {
+                minTriangle = i / 3;
+                minDistance = dist;
+            }
+        }
+
+        return { normals, minTriangle };
+    }
+
+    void PhysicsEngine::AddIfUniqueEdge(std::vector <std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b)
+    {
+        auto rev = std::find
+        (edges.begin(), edges.end(), 
+         std::make_pair(faces[b], faces[a]));
+
+        if (rev != edges.end())
+        {
+            edges.erase(rev);
+        }
+        else
+        {
+            edges.emplace_back(faces[a], faces[b]);
+        }
+    }
+
+    void PhysicsEngine::ImpulseSolver(float dt)
+    {
+        for (auto& cInfo : collisionInfos)
+        {
+            PhysicsData& aPhysicsData = simulateBuffer[cInfo.aInd];
+            PhysicsData& bPhysicsData = simulateBuffer[cInfo.bInd];
+            //Simple Model
+            //impulse = m*v
+            //a to b impulse
+            auto ImpulseAtoB = aPhysicsData.isKinematic ? utils::Vector3(0, 0, 0) : aPhysicsData.velocity * aPhysicsData.mass;
+            //b to a impulse
+            auto ImpulseBtoA = bPhysicsData.isKinematic ? utils::Vector3(0, 0, 0) : bPhysicsData.velocity * bPhysicsData.mass;
+            
+            if (!aPhysicsData.isKinematic)
+                aPhysicsData.velocity += ImpulseBtoA / aPhysicsData.mass;
+            if (!bPhysicsData.isKinematic)
+                bPhysicsData.velocity -= ImpulseAtoB / bPhysicsData.mass;
+        }
+    }
+
+    void PhysicsEngine::PositionSolver(float dt)
+    {
+        for (auto& cInfo : collisionInfos)
+        {
+            PhysicsData& aPhysicsData = simulateBuffer[cInfo.aInd];
+            PhysicsData& bPhysicsData = simulateBuffer[cInfo.bInd];
+
+            utils::Vector3 resolution = cInfo.normal * cInfo.depth;
+
+            if (!aPhysicsData.isKinematic)
+                aPhysicsData.position -= resolution;
+            if (!bPhysicsData.isKinematic)
+                bPhysicsData.position += resolution;
+        }
     }
 }

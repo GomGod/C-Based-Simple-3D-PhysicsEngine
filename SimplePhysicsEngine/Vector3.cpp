@@ -10,7 +10,7 @@ namespace utils {
         return Vector3(nx, ny, nz);
     }
 
-    Vector3& Vector3::operator-() const
+    Vector3 Vector3::operator-() const
     {
         return *this * -1;
     }
@@ -92,6 +92,25 @@ namespace utils {
         z -= v.z;
         return *this;
     }
+
+    Vector3& Vector3::operator/=(float i)
+    {
+        x /= i;
+        y /= i;
+        z /= i;
+
+        return *this;
+    }
+
+    Vector3& Vector3::operator*=(float i)
+    {
+        x *= i;
+        y *= i;
+        z *= i;
+
+        return *this;
+    }
+
     std::ostream& operator<<(std::ostream& os, const Vector3& v)
     {
         os << "(" << v.x << ", " << v.y << ", " << v.z << ")";

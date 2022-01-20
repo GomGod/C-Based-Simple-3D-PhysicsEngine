@@ -79,6 +79,10 @@ namespace SimplePhysicsEngine
         utils::Vector3 forces;
         bool isKinematic;
 
+        float staticFriction;
+        float dynamicFriction;
+        float bouciness;
+
         RigidBody(float mass = 10.0f, float gravity = 1.0f, utils::Vector3 velocity = utils::Vector3{0,0,0}, utils::Vector3 forces= utils::Vector3{ 0,0,0 }, bool isKinematic=false) :mass(mass), gravity(gravity), velocity(velocity), forces(forces), isKinematic(isKinematic)
         {}
     };

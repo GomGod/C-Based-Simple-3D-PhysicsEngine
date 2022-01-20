@@ -22,14 +22,17 @@ namespace utils
             this->z = origin.z;
         }
 
-        explicit Vector3(float xc = 0, float yc = 0, float zc = 0);
+        Vector3(float xc = 0, float yc = 0, float zc = 0);
         Vector3 operator + (Vector3 v) const;
-        Vector3& operator - () const;
+        Vector3 operator - () const;
         Vector3 operator - (Vector3 v) const;                
         Vector3 operator *(float i) const;
         Vector3 operator /(float i) const;
         Vector3& operator +=(const Vector3& v);
         Vector3& operator -=(const Vector3& v);
+        Vector3& operator *=(float i);
+        Vector3& operator /=(float i);
+
         float GetVectorSize() const;
         float GetMagnitude() const;
         static float GetDistance(Vector3 v1, Vector3 v2);

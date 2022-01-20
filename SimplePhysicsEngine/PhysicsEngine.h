@@ -6,7 +6,9 @@
 #include <chrono>
 #include <queue>
 #include <mutex>
+#include <utility>
 
+#include "Vector4.h"
 #include "Object.h"
 #include "MeshCollider.h"
 #include "Simplex.h"
@@ -34,6 +36,15 @@ namespace SimplePhysicsEngine
     {
         int aInd;
         int bInd;
+    };
+
+    struct CollisionPoints
+    {
+        int aInd;
+        int bInd;
+        utils::Vector3 normal;
+        float depth;
+        bool hasCollision;
     };
 
     class PhysicsEngine 
@@ -71,6 +82,15 @@ namespace SimplePhysicsEngine
         bool Line(Simplex& points, utils::Vector3& dir);
         bool Triangle(Simplex& points, utils::Vector3& dir);
         bool Tetrahedron(Simplex& points, utils::Vector3& dir);
+
+        //EPA
+        CollisionPoints EPA(const Simplex& simplex, const MeshCollider* colliderA, const MeshCollider* colliderB);
+        std::pair<std::vector<utils::Vector4>, size_t> GetFaceNormals(const std::vector<utils::Vector3>& polytope, const std::vector<size_t>& faces);
+        void AddIfUniqueEdge(std::vector <std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b);
+
+        //Collision Solver
+        void ImpulseSolver(float delta);
+        void PositionSolver(float delta);
 
     public:           
         static PhysicsData PhysicsCopy(const Object& origin);
