@@ -50,10 +50,12 @@ Object class의 데이터를 기반으로 구 렌더링
 
 **2022-01-20**   
 충돌 정보 획득 및 충돌 반응 테스트
-![asdf](https://user-images.githubusercontent.com/46223506/150349538-e53f851d-0c5b-4d78-8f77-445da79dfcd5.gif)   
+![asdf](https://user-images.githubusercontent.com/46223506/150351992-242cd0c8-e880-4223-be5f-78172e47ac41.gif)   
 Position Solver, Impulse Solver 적용   
 
 ###### !Issue
-1. Frame drop - 오브젝트가 조금만 늘어도 프레임드랍이 굉장히 심함.
+1. Frame drop - 오브젝트가 조금만 늘어도 프레임 드랍이 체감되는 수준 => delta time 적용으로 어느 정도 해소
+2. Tunneling - 속도가 빠른 물체가 재배치 되거나 delta time이 커지면 물체를 뚫고 지나가는 문제가 있음.
+=>AABB를 활용한 CCD 구현을 통해 어느정도 해결 가능 할 것으로 보임
 
 C++ Based 3D Physics Engine
