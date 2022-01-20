@@ -50,8 +50,10 @@ Object class의 데이터를 기반으로 구 렌더링
 
 **2022-01-20**   
 충돌 정보 획득 및 충돌 반응 테스트
-![asdf](https://user-images.githubusercontent.com/46223506/150340077-d78615d1-3204-4a9d-b904-ae007e781459.gif)   
-Position Solver 적용 및 임시 Impulse Solver 추가 테스트
+![asdf](https://user-images.githubusercontent.com/46223506/150349538-e53f851d-0c5b-4d78-8f77-445da79dfcd5.gif)   
+Position Solver, Impulse Solver 적용   
 
+###### !Issue
+1. Frame drop - 오브젝트가 조금만 늘어도 프레임드랍이 굉장히 심함. mutex 문제로 추정됨   
 
 C++ Based 3D Physics Engine
