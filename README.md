@@ -48,5 +48,10 @@ Object class의 데이터를 기반으로 구 렌더링
 충돌 감지 구현(충돌처리 기초 설계의 1-2 구현)   
 ![zx](https://user-images.githubusercontent.com/46223506/150134210-315397b0-b4d0-40ff-b7b5-f164e03eae64.gif)   
 
+**2022-01-20**   
+충돌 정보 획득 및 충돌 반응 테스트
+![asdf](https://user-images.githubusercontent.com/46223506/150340077-d78615d1-3204-4a9d-b904-ae007e781459.gif)   
+Position Solver 적용 및 임시 Impulse Solver 추가 테스트
+
 
 C++ Based 3D Physics Engine
