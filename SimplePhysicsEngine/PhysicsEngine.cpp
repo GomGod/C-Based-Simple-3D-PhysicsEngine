@@ -24,22 +24,27 @@ namespace SimplePhysicsEngine
         //adjust gravity        
         for (auto i=0; i < simulateBuffer.size(); i+=1)
         {            
-            if (simulateBuffer[i].isKinematic) continue;
-            simulateBuffer[i].forces += defaultGravity;                        
-            simulateBuffer[i].velocity += simulateBuffer[i].forces / simulateBuffer[i].mass * dt;
-            simulateBuffer[i].position += simulateBuffer[i].velocity * dt;
+            auto& rb = simulateBuffer[i].rigidBody;
+            auto& tf = simulateBuffer[i].transform;
+            if (rb.isKinematic) continue;
+            rb.forces += defaultGravity;                        
+            rb.velocity += rb.forces / rb.mass * dt;
+            tf.position += rb.velocity * dt;
             
-            simulateBuffer[i].forces.x = 0;
-            simulateBuffer[i].forces.y = 0;
-            simulateBuffer[i].forces.z = 0;
+            rb.forces.x = 0;
+            rb.forces.y = 0;
+            rb.forces.z = 0;
         }   
 
         //update latestBuffer
         lBufferLock.lock();
         for (auto i = 0; i < latestBuffer.size(); ++i)
         {
-            latestBuffer[i]->UpdatePhysics(simulateBuffer[i].velocity, simulateBuffer[i].forces);
-            latestBuffer[i]->UpdateTranform(simulateBuffer[i].position, simulateBuffer[i].rotation);
+            auto& rb = simulateBuffer[i].rigidBody;
+            auto& tf = simulateBuffer[i].transform;
+
+            latestBuffer[i]->UpdatePhysics(rb.velocity, rb.forces);
+            latestBuffer[i]->UpdateTranform(tf.position, tf.rotation);
         }
 
         sBufferLock.unlock();
@@ -102,8 +107,8 @@ namespace SimplePhysicsEngine
         {
             for (auto j = i + 1; j < simulateBuffer.size(); ++j)
             {
-                AABB worldPosAABB1 = simulateBuffer[i].aabb + simulateBuffer[i].position;
-                AABB worldPosAABB2 = simulateBuffer[j].aabb + simulateBuffer[j].position;
+                AABB worldPosAABB1 = simulateBuffer[i].aabb + simulateBuffer[i].transform.position;
+                AABB worldPosAABB2 = simulateBuffer[j].aabb + simulateBuffer[j].transform.position;
 
                 if (worldPosAABB1.TestAABBCollision(worldPosAABB2))
                 {  
@@ -118,8 +123,8 @@ namespace SimplePhysicsEngine
     {   
         for (auto i = 0; i < collisions.size(); ++i)
         {
-            if (GJK(&simulateBuffer[collisions[i].aInd].collider, simulateBuffer[collisions[i].aInd].position,
-                &simulateBuffer[collisions[i].bInd].collider, simulateBuffer[collisions[i].bInd].position))
+            if (GJK(&simulateBuffer[collisions[i].aInd].collider, simulateBuffer[collisions[i].aInd].transform.position,
+                &simulateBuffer[collisions[i].bInd].collider, simulateBuffer[collisions[i].bInd].transform.position))
             {
                 auto& colData = collisionInfos.back();
                 colData.aInd = collisions[i].aInd;
@@ -167,10 +172,7 @@ namespace SimplePhysicsEngine
 
     PhysicsData PhysicsEngine::PhysicsCopy(const Object& origin)
     {
-        const Transform* tf{ origin.transform };
-        const RigidBody* rb{ origin.rigidBody };
-
-        return SimplePhysicsEngine::PhysicsData(tf->position, tf->rotation, rb->velocity, rb->forces, MeshCollider(*origin.collider), AABB(*origin.aabb), rb->mass, rb->isKinematic);
+        return SimplePhysicsEngine::PhysicsData(*origin.transform, *origin.rigidBody, *origin.aabb, *origin.collider);
     }    
 
     bool PhysicsEngine::GJK(const MeshCollider* colliderA, utils::Vector3 posA , const MeshCollider* colliderB, utils::Vector3 posB)
@@ -498,16 +500,79 @@ namespace SimplePhysicsEngine
             PhysicsData& aPhysicsData = simulateBuffer[cInfo.aInd];
             PhysicsData& bPhysicsData = simulateBuffer[cInfo.bInd];
             //Simple Model
-            //impulse = m*v
-            //a to b impulse
-            auto ImpulseAtoB = aPhysicsData.isKinematic ? utils::Vector3(0, 0, 0) : aPhysicsData.velocity * aPhysicsData.mass;
-            //b to a impulse
-            auto ImpulseBtoA = bPhysicsData.isKinematic ? utils::Vector3(0, 0, 0) : bPhysicsData.velocity * bPhysicsData.mass;
-            
-            if (!aPhysicsData.isKinematic)
-                aPhysicsData.velocity += ImpulseBtoA / aPhysicsData.mass;
-            if (!bPhysicsData.isKinematic)
-                bPhysicsData.velocity -= ImpulseAtoB / bPhysicsData.mass;
+
+            bool isAKinematic = aPhysicsData.rigidBody.isKinematic;
+            bool isBKinematic = bPhysicsData.rigidBody.isKinematic;
+
+            auto aVelocity = isAKinematic ? utils::Vector3(0, 0, 0) : aPhysicsData.rigidBody.velocity;
+            auto bVelocity = isBKinematic ? utils::Vector3(0, 0, 0) : bPhysicsData.rigidBody.velocity;
+            auto rVelocity = bVelocity - aVelocity;
+            float spd = utils::Vector3::DotProduct(rVelocity, cInfo.normal);
+
+            float aInvMass = isAKinematic ? 1.0f : 1.0f / aPhysicsData.rigidBody.mass;
+            float bInvMass = isBKinematic ? 1.0f : 1.0f / bPhysicsData.rigidBody.mass;
+
+            if (spd >= 0)
+                continue;
+
+            float e = aPhysicsData.rigidBody.bounciness * bPhysicsData.rigidBody.bounciness;
+            float j = -(1.0f + e) * spd / (aInvMass + bInvMass);
+
+            utils::Vector3 impulse = cInfo.normal * j;
+
+            if (!isAKinematic)
+            {
+                aVelocity -= impulse * aInvMass;
+            }
+
+            if (!isBKinematic)
+            {
+                bVelocity += impulse * bInvMass;
+            }
+
+            //friction
+            rVelocity = bVelocity - aVelocity;
+            spd = utils::Vector3::DotProduct(rVelocity, cInfo.normal);
+
+            utils::Vector3 tan = rVelocity - (cInfo.normal*spd);
+
+            if (tan.GetMagnitude() > 0.0001f)
+            {
+                tan = utils::Vector3::Normalize(tan);
+            }
+
+            float fVelocity = utils::Vector3::DotProduct(rVelocity, tan);
+
+            float aStaticFric = aPhysicsData.rigidBody.staticFriction;
+            float bStaticFric = bPhysicsData.rigidBody.staticFriction;
+            float aDynamicFric = aPhysicsData.rigidBody.dynamicFriction;
+            float bDynamicFric = bPhysicsData.rigidBody.dynamicFriction;
+            float m = utils::Vector3(aStaticFric, bStaticFric, 0).GetMagnitude();
+
+            float fric = -fVelocity / (aInvMass + bInvMass);
+
+            utils::Vector3 friction;
+            if (abs(fric) < j * m)
+            {
+                friction = tan * fric;
+            }
+            else
+            {
+                m = utils::Vector3(aDynamicFric, bDynamicFric, 0).GetMagnitude();
+                friction = tan * -j * m;
+            }
+            //friction
+
+
+            if (!isAKinematic)
+            {
+                aPhysicsData.rigidBody.velocity = aVelocity - friction*aInvMass;
+            }
+
+            if (!isBKinematic)
+            {
+                bPhysicsData.rigidBody.velocity = bVelocity + friction*bInvMass;
+            }
         }
     }
 
@@ -520,10 +585,10 @@ namespace SimplePhysicsEngine
 
             utils::Vector3 resolution = cInfo.normal * cInfo.depth;
 
-            if (!aPhysicsData.isKinematic)
-                aPhysicsData.position -= resolution;
-            if (!bPhysicsData.isKinematic)
-                bPhysicsData.position += resolution;
+            if (!aPhysicsData.rigidBody.isKinematic)
+                aPhysicsData.transform.position -= resolution;
+            if (!bPhysicsData.rigidBody.isKinematic)
+                bPhysicsData.transform.position += resolution;
         }
     }
 }

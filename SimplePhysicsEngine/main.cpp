@@ -124,10 +124,10 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		AddSphereToPhysicsWorld(transform1, rigidBody1, material1, 0.5f, 36, 18);
 		
 		SimplePhysicsEngine::Transform* transform2 = new SimplePhysicsEngine::Transform();
-		transform2->position = utils::Vector3(2.5f, 0.0f, 2.5f);
+		transform2->position = utils::Vector3(5.0f, 0.0f, 5.0f);
 		SimplePhysicsEngine::RigidBody* rigidBody2 = new SimplePhysicsEngine::RigidBody();
 		SimplePhysicsEngine::Material* material2 = new SimplePhysicsEngine::Material(defaultShader, utils::Vector3(0.1f, 0.1f, 0.8f));		
-		rigidBody2->velocity = utils::Vector3(-1.0f, 0.5f, -1.0f);
+		rigidBody2->velocity = utils::Vector3(-0.25f, 0.5f, -0.25f);
 		AddSphereToPhysicsWorld(transform2, rigidBody2, material2, 0.5f, 36, 18);
 	}
 }

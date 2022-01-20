@@ -57,6 +57,12 @@ namespace SimplePhysicsEngine
             this->position = position;
             this->rotation = rotation;
         }
+
+        Transform(const Transform& origin)
+        {
+            position = origin.position;
+            rotation = origin.rotation;
+        }
     };
 
     struct Material
@@ -68,7 +74,7 @@ namespace SimplePhysicsEngine
         Shader* shader;
 
         Material(Shader* shader, utils::Vector3 color = utils::Vector3{ 1.0f, 1.0f, 1.0f }, utils::Vector3 ambient = utils::Vector3{ 0.5f, 0.5f, 0.5f }, utils::Vector3 diffuse = utils::Vector3{ 0.5f, 0.5f, 0.5f }, utils::Vector3 specular = utils::Vector3{ 0.5f, 0.5f, 0.5f }) :shader(shader), color(color), ambient(ambient), diffuse(diffuse), specular(specular)
-        {}
+        {}        
     };
 
     struct RigidBody
@@ -81,10 +87,26 @@ namespace SimplePhysicsEngine
 
         float staticFriction;
         float dynamicFriction;
-        float bouciness;
+        float bounciness;
 
         RigidBody(float mass = 10.0f, float gravity = 1.0f, utils::Vector3 velocity = utils::Vector3{0,0,0}, utils::Vector3 forces= utils::Vector3{ 0,0,0 }, bool isKinematic=false) :mass(mass), gravity(gravity), velocity(velocity), forces(forces), isKinematic(isKinematic)
-        {}
+        {
+            staticFriction = 0.5f;
+            dynamicFriction = 0.5f;
+            bounciness = 0.5f;
+        }
+
+        RigidBody(const RigidBody& origin)
+        {
+            mass = origin.mass;
+            gravity = origin.gravity;
+            velocity = origin.velocity;
+            forces = origin.forces;
+            isKinematic = origin.isKinematic;
+            staticFriction = origin.staticFriction;
+            dynamicFriction = origin.dynamicFriction;
+            bounciness = origin.bounciness;
+        }
     };
 
     class Object {

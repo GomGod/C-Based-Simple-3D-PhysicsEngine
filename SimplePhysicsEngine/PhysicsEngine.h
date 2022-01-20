@@ -17,18 +17,13 @@ namespace SimplePhysicsEngine
 {   
     struct PhysicsData
     {
-        utils::Vector3 position;
-        utils::Vector3 rotation;
-        utils::Vector3 velocity;
-        utils::Vector3 forces;
+        Transform transform;
+        RigidBody rigidBody;
         AABB aabb;
         MeshCollider collider;
 
-        float mass;
-        bool isKinematic;
-
-        PhysicsData(utils::Vector3 position, utils::Vector3 rotation, utils::Vector3 velocity, utils::Vector3 forces, MeshCollider collider, AABB aabb, float mass, bool isKinematic)
-            :position(position), rotation(rotation), velocity(velocity), forces(forces), mass(mass), isKinematic(isKinematic), collider(collider), aabb(aabb)
+        PhysicsData(Transform transform, RigidBody rigidBody, AABB aabb, MeshCollider collider)
+            :transform(transform), rigidBody(rigidBody), aabb(aabb), collider(collider)
         {}        
     };
 
