@@ -111,7 +111,7 @@ namespace SimplePhysicsEngine
                 AABB worldPosAABB2 = simulateBuffer[j].aabb + simulateBuffer[j].transform.position;
 
                 if (worldPosAABB1.TestAABBCollision(worldPosAABB2))
-                {  
+                {                      
                     collisions.push_back(Collisions{ i, j });
                 }
             }
@@ -124,9 +124,9 @@ namespace SimplePhysicsEngine
         vector<CollisionPoints>().swap(collisionInfos);
         for (auto i = 0; i < collisions.size(); ++i)
         {
-            if (GJK(&simulateBuffer[collisions[i].aInd].collider, simulateBuffer[collisions[i].aInd].transform.position,
-                &simulateBuffer[collisions[i].bInd].collider, simulateBuffer[collisions[i].bInd].transform.position))
-            {
+            if (GJK(&simulateBuffer[collisions[i].aInd].collider, simulateBuffer[collisions[i].aInd].transform.position, simulateBuffer[collisions[i].aInd].transform.rotation,
+                &simulateBuffer[collisions[i].bInd].collider, simulateBuffer[collisions[i].bInd].transform.position, simulateBuffer[collisions[i].bInd].transform.rotation))
+            {                
                 auto& colData = collisionInfos.back();
                 colData.aInd = collisions[i].aInd;
                 colData.bInd = collisions[i].bInd;
@@ -175,14 +175,43 @@ namespace SimplePhysicsEngine
         return SimplePhysicsEngine::PhysicsData(origin.GetTransform(), *origin.rigidBody, *origin.aabb, *origin.collider);
     }
     
-    bool PhysicsEngine::GJK(const MeshCollider* colliderA, utils::Vector3 posA , const MeshCollider* colliderB, utils::Vector3 posB)
-    {
-        utils::Vector3 dir = utils::Vector3{ 1,0,0 };
-                
-        auto wposColliderA = *colliderA + posA;
-        auto wposColliderB = *colliderB + posB;
+    bool PhysicsEngine::GJK(const MeshCollider* colliderA, utils::Vector3 posA, utils::Vector3 rotA, const MeshCollider* colliderB, utils::Vector3 posB, utils::Vector3 rotB)
+    {   
+        //Transform Colliders
+        MeshCollider wposColliderA = *colliderA;
+        MeshCollider wposColliderB = *colliderB;        
+        glm::mat4 rotationA = glm::mat4(1.0f);
+        rotationA = glm::rotate(rotationA, glm::radians(-rotA.x), glm::vec3(1, 0, 0));
+        rotationA = glm::rotate(rotationA, glm::radians(rotA.y), glm::vec3(0, 1, 0));
+        rotationA = glm::rotate(rotationA, glm::radians(-rotA.z), glm::vec3(0, 0, 1));
+        
+        for (auto& vertex : wposColliderA.colliderVertices)
+        {
+            glm::vec4 rotVertex = glm::vec4(vertex.x, vertex.y, vertex.z, 1.0f) * rotationA;
+            vertex.x = rotVertex.x;
+            vertex.y = rotVertex.y;
+            vertex.z = rotVertex.z;
+           
+        }//rotate        
+        wposColliderA = wposColliderA + posA; //translate
+        
+        glm::mat4 rotationB = glm::mat4(1.0f);
+        rotationB = glm::rotate(rotationB, glm::radians(-rotB.x), glm::vec3(1, 0, 0));
+        rotationB = glm::rotate(rotationB, glm::radians(rotB.y), glm::vec3(0, 1, 0));
+        rotationB = glm::rotate(rotationB, glm::radians(-rotB.z), glm::vec3(0, 0, 1));
+
+        for (auto& vertex : wposColliderB.colliderVertices)
+        {
+            glm::vec4 rotVertex = glm::vec4(vertex.x, vertex.y, vertex.z, 1.0f) * rotationB;
+            vertex.x = rotVertex.x;
+            vertex.y = rotVertex.y;
+            vertex.z = rotVertex.z;
+        }//rotate
+        wposColliderB = wposColliderB + posB; //translate
+
 
         //initial support pnt
+        utils::Vector3 dir = utils::Vector3{ 1,0,0 };
         utils::Vector3 support = Support(&wposColliderA, &wposColliderB, dir);      
         Simplex points;
         points.Push(support);

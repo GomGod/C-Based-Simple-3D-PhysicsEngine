@@ -67,7 +67,7 @@ int main()
 	AddSphereToPhysicsWorld(transform, rigidBody, material, 1.0f, 36, 18);
 
 	//add plane(ground)
-	transform = new SimplePhysicsEngine::Transform(utils::Vector3(0,-30.0f, 0));
+	transform = new SimplePhysicsEngine::Transform(utils::Vector3(0,-30.0f, 0), utils::Vector3(25.0f, 25.0f, 25.0f));
 	rigidBody = new SimplePhysicsEngine::RigidBody(10.0f, 0.0f, zero, zero, true);
 	material = new SimplePhysicsEngine::Material(defaultShader, utils::Vector3::Normalize(utils::Vector3(70, 70, 70)));
 	AddPlaneToPhyscisWorld(transform, rigidBody, material, 100.0f, 100.0f, 1.0f);
@@ -120,15 +120,16 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		SimplePhysicsEngine::Transform* transform1 = new SimplePhysicsEngine::Transform();
 		SimplePhysicsEngine::RigidBody* rigidBody1 = new SimplePhysicsEngine::RigidBody();
 		SimplePhysicsEngine::Material* material1 = new SimplePhysicsEngine::Material(defaultShader, utils::Vector3(0.8f, 0.1f, 0.1f));
-		rigidBody1->velocity = utils::Vector3(0.25f, 0.5f, 0.25f);
+		rigidBody1->velocity = utils::Vector3(0.0f, 0.0f, 0.0f);
+		//rigidBody1->velocity = utils::Vector3(0.25f, 0.5f, 0.25f);
 		AddSphereToPhysicsWorld(transform1, rigidBody1, material1, 0.5f, 36, 18);
 		
-		SimplePhysicsEngine::Transform* transform2 = new SimplePhysicsEngine::Transform();
+		/*SimplePhysicsEngine::Transform* transform2 = new SimplePhysicsEngine::Transform();
 		transform2->position = utils::Vector3(5.0f, 0.0f, 5.0f);
 		SimplePhysicsEngine::RigidBody* rigidBody2 = new SimplePhysicsEngine::RigidBody();
 		SimplePhysicsEngine::Material* material2 = new SimplePhysicsEngine::Material(defaultShader, utils::Vector3(0.1f, 0.1f, 0.8f));		
 		rigidBody2->velocity = utils::Vector3(-0.25f, 0.5f, -0.25f);
-		AddSphereToPhysicsWorld(transform2, rigidBody2, material2, 0.5f, 36, 18);
+		AddSphereToPhysicsWorld(transform2, rigidBody2, material2, 0.5f, 36, 18);*/
 	}
 }
 

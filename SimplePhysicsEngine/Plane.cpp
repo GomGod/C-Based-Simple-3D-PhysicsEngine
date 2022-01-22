@@ -48,12 +48,6 @@ namespace SimplePhysicsEngine
 		AddNormal(0, -1.0f, 0);
 
 		BuildInterleavedVertices();
-
-		aabb->minX = -width * 0.5f;
-		aabb->maxX = width * 0.5f;
-		aabb->minY = -thickness * 0.5f;
-		aabb->maxY = thickness * 0.5f;
-		aabb->minZ = -height * 0.5f;
-		aabb->maxZ = height * 0.5f;
+		UpdateAABB();
 	}
 }

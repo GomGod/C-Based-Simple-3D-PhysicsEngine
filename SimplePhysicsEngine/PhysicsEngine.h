@@ -70,7 +70,7 @@ namespace SimplePhysicsEngine
         void PreDetectCollision();
         void SecondDetectCollision();
 
-        bool GJK(const MeshCollider* colliderA, utils::Vector3 posA, const MeshCollider* colliderB, utils::Vector3 posB);
+        bool GJK(const MeshCollider* colliderA, utils::Vector3 posA, utils::Vector3 rotA, const MeshCollider* colliderB, utils::Vector3 posB,utils::Vector3 rotB);
         utils::Vector3 Support(const MeshCollider* colliderA, const MeshCollider* colliderB, utils::Vector3 dir);
         bool NextSimplex(Simplex& points, utils::Vector3& dir);
         bool SameDirection(const utils::Vector3& dir, const utils::Vector3 ao);

@@ -20,15 +20,14 @@ namespace SimplePhysicsEngine
 
         auto vCount = GetVertexCount();
         glm::mat4 rotateMatrix = glm::mat4(1.0f);
-        rotateMatrix = glm::rotate(rotateMatrix, transform->rotation.x, glm::vec3(1, 0, 0));
-        rotateMatrix = glm::rotate(rotateMatrix, transform->rotation.y, glm::vec3(0, 1, 0));
-        rotateMatrix = glm::rotate(rotateMatrix, transform->rotation.z, glm::vec3(0, 0, 1));
-
+        rotateMatrix = glm::rotate(rotateMatrix, glm::radians(-transform->rotation.x), glm::vec3(1, 0, 0));
+        rotateMatrix = glm::rotate(rotateMatrix, glm::radians(transform->rotation.y), glm::vec3(0, 1, 0));
+        rotateMatrix = glm::rotate(rotateMatrix, glm::radians(-transform->rotation.z), glm::vec3(0, 0, 1));
 
         for (auto i = 0; i + 2 < vCount; i += 1)
         {
             auto vertex = glm::vec3(vertices[i], vertices[i + 1], vertices[i + 2]);
-            vertex =  glm::vec4(vertex, 1.0) * rotateMatrix;
+            vertex = glm::vec4(vertex, 1.0) * rotateMatrix;
 
             if (minX > vertices[i]) minX = vertex.x;
             if (maxX < vertices[i]) maxX = vertex.x;
