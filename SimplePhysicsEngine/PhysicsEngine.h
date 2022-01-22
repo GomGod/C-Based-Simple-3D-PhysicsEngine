@@ -63,7 +63,7 @@ namespace SimplePhysicsEngine
 
         [[noreturn]] void threadPhysicsUpdate();        
 
-        void addObjectsAtWaitingQueue();
+        void AddObjectsAtWaitingQueue();
         void removeObjectsAtWaitingQueue();
 
         //test
@@ -90,13 +90,13 @@ namespace SimplePhysicsEngine
     public:           
         static PhysicsData PhysicsCopy(const Object& origin);
 
-        void runPhysicsThread();
-        void addObject(Object* obj);
-        void removeObject(int ID);
-        void updatePhysics(float dt);
+        void RunPhysicsThread();
+        void AddObject(Object* obj);
+        void RemoveObject(int ID);
+        void UpdatePhysics(float dt);
 
-        int getObjectsNumber() { return latestBuffer.size(); };
-        std::vector<Object*> getLatestBuffer() { return latestBuffer; };
+        int GetObjectsNumber() { return latestBuffer.size(); };
+        std::vector<Object*> GetLatestBuffer() { return latestBuffer; };
     };
 }
 

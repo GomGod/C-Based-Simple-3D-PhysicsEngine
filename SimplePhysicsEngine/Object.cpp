@@ -14,7 +14,41 @@ namespace SimplePhysicsEngine
         rigidBody->forces = forces;
     }
 
-    void Object::buildInterleavedVertices()
+    void Object::UpdateAABB()
+    {
+        float minX = FLT_MAX, maxX = FLT_MIN, minY = FLT_MAX, maxY = FLT_MIN, minZ = FLT_MAX, maxZ = FLT_MIN;
+
+        auto vCount = GetVertexCount();
+        glm::mat4 rotateMatrix = glm::mat4(1.0f);
+        rotateMatrix = glm::rotate(rotateMatrix, transform->rotation.x, glm::vec3(1, 0, 0));
+        rotateMatrix = glm::rotate(rotateMatrix, transform->rotation.y, glm::vec3(0, 1, 0));
+        rotateMatrix = glm::rotate(rotateMatrix, transform->rotation.z, glm::vec3(0, 0, 1));
+
+
+        for (auto i = 0; i + 2 < vCount; i += 1)
+        {
+            auto vertex = glm::vec3(vertices[i], vertices[i + 1], vertices[i + 2]);
+            vertex =  glm::vec4(vertex, 1.0) * rotateMatrix;
+
+            if (minX > vertices[i]) minX = vertex.x;
+            if (maxX < vertices[i]) maxX = vertex.x;
+
+            if (minY > vertices[i + 1]) minY = vertex.y;
+            if (maxY < vertices[i + 1]) maxY = vertex.y;
+
+            if (minZ > vertices[i + 2]) minZ = vertex.z;
+            if (maxZ < vertices[i + 2]) maxZ = vertex.z;
+        }
+
+        aabb->minX = minX;
+        aabb->minY = minY;
+        aabb->minZ = minZ;
+        aabb->maxX = maxX;
+        aabb->maxY = maxY;
+        aabb->maxZ = maxZ;
+    }
+
+    void Object::BuildInterleavedVertices()
     {
         std::vector<float>().swap(interleavedVertexAttrib);
 
@@ -31,39 +65,39 @@ namespace SimplePhysicsEngine
             interleavedVertexAttrib.push_back(normals[i + 2]);
         }
 
-        collider->BuildColliderVertices(vertices.data(), getVertexCount());
-        buildVAO();
+        collider->BuildColliderVertices(vertices.data(), GetVertexCount());
+        BuildVAO();
     }
 
-    void Object::clearArrays()
+    void Object::ClearArrays()
     {
         std::vector<float>().swap(vertices);
         std::vector<float>().swap(normals);
         std::vector<unsigned int>().swap(indices);
     }
 
-    void Object::addVertex(float x, float y, float z)
+    void Object::AddVertex(float x, float y, float z)
     {
         vertices.push_back(x);
         vertices.push_back(y);
         vertices.push_back(z);
     }
 
-    void Object::addNormal(float x, float y, float z)
+    void Object::AddNormal(float x, float y, float z)
     {
         normals.push_back(x);
         normals.push_back(y);
         normals.push_back(z);
     }
 
-    void Object::addIndices(unsigned int i1, unsigned int i2, unsigned int i3)
+    void Object::AddIndices(unsigned int i1, unsigned int i2, unsigned int i3)
     {
         indices.push_back(i1);
         indices.push_back(i2);
         indices.push_back(i3);
     }
 
-    std::vector<float> Object::getFaceNormal(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3)
+    std::vector<float> Object::GetFaceNormal(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3)
     {
         const float EPSILON = 0.000001f;
 
@@ -96,7 +130,7 @@ namespace SimplePhysicsEngine
 
         return normal;
     }
-    void Object::buildVAO()
+    void Object::BuildVAO()
     {        
         glGenVertexArrays(1, &VAO); //Gen VAO
         glBindVertexArray(VAO); // Bind VAO
@@ -104,12 +138,12 @@ namespace SimplePhysicsEngine
         //Set Vertex Data
         glGenBuffers(1, &VBO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, getInterleavedVertexAttribSize(), getInterleavedVertexAttrib(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, GetInterleavedVertexAttribSize(), GetInterleavedVertexAttrib(), GL_STATIC_DRAW);
 
         //Set Draw Indicies
         glGenBuffers(1, &EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndexSize(), getIndicies(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetIndexSize(), GetIndicies(), GL_STATIC_DRAW);
 
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -121,25 +155,26 @@ namespace SimplePhysicsEngine
         glBindVertexArray(0); // Unbind VAO        
     }
 
-    void Object::draw(glm::vec3 cameraPos, glm::mat4 view, glm::mat4 projection)
+    void Object::Draw(glm::vec3 cameraPos, glm::mat4 view, glm::mat4 projection)
     {
-        activateShader();
+        ActivateShader();
         glBindVertexArray(VAO);
-        auto shader = getShader();
+        auto shader = GetShader();
 
-        shader->setVec3("viewPos", cameraPos.x, cameraPos.y, cameraPos.z);
-        shader->setMat4("view", view);
-        shader->setMat4("projection", projection);
-        shader->setVec3("material.ambient", material->ambient.x, material->ambient.y, material->ambient.z);
-        shader->setVec3("material.diffuse", material->diffuse.x, material->diffuse.y, material->diffuse.z);
-        shader->setVec3("material.specular", material->specular.x, material->specular.y, material->specular.z);
-        shader->setVec3("material.color", material->color.x, material->color.y, material->color.z);
-        glm::mat4 model = glm::mat4(1.0);
+        shader->SetVec3("viewPos", cameraPos.x, cameraPos.y, cameraPos.z);
+        shader->SetMat4("view", view);
+        shader->SetMat4("projection", projection);
+        shader->SetVec3("material.ambient", material->ambient.x, material->ambient.y, material->ambient.z);
+        shader->SetVec3("material.diffuse", material->diffuse.x, material->diffuse.y, material->diffuse.z);
+        shader->SetVec3("material.specular", material->specular.x, material->specular.y, material->specular.z);
+        shader->SetVec3("material.color", material->color.x, material->color.y, material->color.z);
+        glm::mat4 model = glm::mat4(1.0);                        
+        model = glm::translate(model, glm::vec3(transform->position.x, transform->position.y, transform->position.z));        
+        model = glm::rotate(model, glm::radians(transform->rotation.x), glm::vec3(1, 0, 0));
+        model = glm::rotate(model, glm::radians(transform->rotation.y), glm::vec3(0, 1, 0));
+        model = glm::rotate(model, glm::radians(transform->rotation.z), glm::vec3(0, 0, 1));
+        shader->SetMat4("model", model);
 
-        model = glm::translate(model, glm::vec3(transform->position.x, transform->position.y, transform->position.z));
-       //model = glm::rotate(model, glm::radians(1.0f), glm::vec3(rotation.x, rotation.y, rotation.z));
-        shader->setMat4("model", model);
-
-        glDrawElements(GL_TRIANGLES, getIndexCount(), GL_UNSIGNED_INT, (void*)0);
+        glDrawElements(GL_TRIANGLES, GetIndexCount(), GL_UNSIGNED_INT, (void*)0);
     }    
 }

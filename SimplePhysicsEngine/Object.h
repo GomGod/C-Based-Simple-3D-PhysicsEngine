@@ -51,7 +51,7 @@ namespace SimplePhysicsEngine
     {
         utils::Vector3 position;
         utils::Vector3 rotation;
-
+    
         Transform(utils::Vector3 position = utils::Vector3{ 0, 0, 0 }, utils::Vector3 rotation = utils::Vector3{ 0, 0, 0 })
         {
             this->position = position;
@@ -62,7 +62,7 @@ namespace SimplePhysicsEngine
         {
             position = origin.position;
             rotation = origin.rotation;
-        }
+        }        
     };
 
     struct Material
@@ -115,7 +115,6 @@ namespace SimplePhysicsEngine
         int ID;
 
         //Vars for physics        
-        Transform* transform;
         RigidBody* rigidBody;
         MeshCollider* collider;
         AABB* aabb;
@@ -149,48 +148,69 @@ namespace SimplePhysicsEngine
         void Object::UpdatePhysics(utils::Vector3 velocity, utils::Vector3 forces);
 
         //Rendering for OpenGL   
-        void setShader(Shader* shader) { material->shader = shader; }
-        const Shader* getShader() const { return material->shader; }
-        void activateShader() { material->shader->use(); }
+        void SetShader(Shader* shader) { material->shader = shader; }
+        const Shader* GetShader() const { return material->shader; }
+        void ActivateShader() { material->shader->use(); }
 
-        const float* getVertices() const { return vertices.data(); }
-        const float* getNormals() const { return normals.data(); }
-        const unsigned int* getIndicies() const { return indices.data(); }
+        const float* GetVertices() const { return vertices.data(); }
+        const float* GetNormals() const { return normals.data(); }
+        const unsigned int* GetIndicies() const { return indices.data(); }
 
-        const int getVertexSize() const { return vertices.size() * sizeof(float); }
-        const int getNormalSize() const { return normals.size() * sizeof(float); }
-        const int getIndexSize() const { return indices.size() * sizeof(float); }
+        const int GetVertexSize() const { return vertices.size() * sizeof(float); }
+        const int GetNormalSize() const { return normals.size() * sizeof(float); }
+        const int GetIndexSize() const { return indices.size() * sizeof(float); }
 
-        unsigned int getVertexCount() const { return (unsigned int)vertices.size(); }
-        unsigned int getNormalCount() const { return (unsigned int)normals.size(); }
-        unsigned int getIndexCount() const { return (unsigned int)indices.size(); }
+        unsigned int GetVertexCount() const { return (unsigned int)vertices.size(); }
+        unsigned int GetNormalCount() const { return (unsigned int)normals.size(); }
+        unsigned int GetIndexCount() const { return (unsigned int)indices.size(); }
 
-        const float* getInterleavedVertexAttrib() const { return interleavedVertexAttrib.data(); }
-        const int getInterleavedVertexAttribSize() { return interleavedVertexAttrib.size() * sizeof(float); }
-        unsigned int getInterleavedVertexAttribCount() const { return (unsigned int)interleavedVertexAttrib.size(); }
+        const float* GetInterleavedVertexAttrib() const { return interleavedVertexAttrib.data(); }
+        const int GetInterleavedVertexAttribSize() { return interleavedVertexAttrib.size() * sizeof(float); }
+        unsigned int GetInterleavedVertexAttribCount() const { return (unsigned int)interleavedVertexAttrib.size(); }
+        unsigned int GetVAO() { return VAO; }
 
-        unsigned int getVAO() { return VAO; }
+        void Draw(glm::vec3 cameraPos, glm::mat4 view, glm::mat4 projection);
 
-        void draw(glm::vec3 cameraPos, glm::mat4 view, glm::mat4 projection);
+        Transform GetTransform() const { return *transform; }
+        Transform SetTransform(Transform tf)
+        {
+            transform->position = tf.position;
+            transform->rotation = tf.rotation;
+            UpdateAABB();
+        }
+        void UpdatePosition(utils::Vector3 pos)
+        {
+            transform->position = pos;
+        }
+        void UpdateRotation(utils::Vector3 rot)
+        {
+            transform->rotation = rot;
+            UpdateAABB();
+        }
+
 
     protected:
+        Transform* transform;
+        //For Physics
+        void UpdateAABB();
+
         //Rendering for OpenGL    
         std::vector<float> vertices;
         std::vector<float> normals;
         std::vector<unsigned int> indices;
         std::vector<float> interleavedVertexAttrib;
         
-        void buildInterleavedVertices();
-        void clearArrays();
-        void addVertex(float x, float y, float z);
-        void addNormal(float x, float y, float z);
-        void addIndices(unsigned int i1, unsigned int i2, unsigned int i3);
-        std::vector<float> getFaceNormal(float x1, float y1, float z1,
+        void BuildInterleavedVertices();
+        void ClearArrays();
+        void AddVertex(float x, float y, float z);
+        void AddNormal(float x, float y, float z);
+        void AddIndices(unsigned int i1, unsigned int i2, unsigned int i3);
+        std::vector<float> GetFaceNormal(float x1, float y1, float z1,
             float x2, float y2, float z2,
             float x3, float y3, float z3);
 
-        void buildVAO();
-        unsigned int VAO, VBO, EBO;
+        void BuildVAO();
+        unsigned int VAO, VBO, EBO;        
     };
 };
 

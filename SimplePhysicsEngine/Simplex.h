@@ -12,9 +12,9 @@ public:
 
 	Simplex& operator=(std::initializer_list<utils::Vector3> list);
 	utils::Vector3& operator[](unsigned i) { return points[i]; }
-	void push(utils::Vector3 pnt);
-	unsigned size() const { return dim; };
-	auto begin() const { return points.begin(); }
-	auto end() const { return points.end() - (4 - dim); }
+	void Push(utils::Vector3 pnt);
+	unsigned Size() const { return dim; };
+	auto Begin() const { return points.begin(); }
+	auto End() const { return points.end() - (4 - dim); }
 };
 

@@ -8,12 +8,9 @@ namespace SimplePhysicsEngine
     vector<CollisionPoints> collisionInfos;
     std::vector<Collisions> collisions;
 
-    void PhysicsEngine::updatePhysics(float dt) {
+    void PhysicsEngine::UpdatePhysics(float dt) {
         //collision detection (test)
-        sBufferLock.lock();
-        PreDetectCollision();
-        SecondDetectCollision();
-        
+        sBufferLock.lock();        
         //resolve collisions
         if (collisionInfos.size())
         {
@@ -21,7 +18,7 @@ namespace SimplePhysicsEngine
             ImpulseSolver(dt);
         }
         
-        //adjust gravity        
+        //adjust world forces 
         for (auto i=0; i < simulateBuffer.size(); i+=1)
         {            
             auto& rb = simulateBuffer[i].rigidBody;
@@ -47,11 +44,14 @@ namespace SimplePhysicsEngine
             latestBuffer[i]->UpdateTranform(tf.position, tf.rotation);
         }
 
+        PreDetectCollision();
+        SecondDetectCollision();
+
         sBufferLock.unlock();
         lBufferLock.unlock();               
     }
 
-    void PhysicsEngine::addObjectsAtWaitingQueue()
+    void PhysicsEngine::AddObjectsAtWaitingQueue()
     {
         woBufferLock.lock();
         lBufferLock.lock();
@@ -121,6 +121,7 @@ namespace SimplePhysicsEngine
         
     void PhysicsEngine::SecondDetectCollision()
     {   
+        vector<CollisionPoints>().swap(collisionInfos);
         for (auto i = 0; i < collisions.size(); ++i)
         {
             if (GJK(&simulateBuffer[collisions[i].aInd].collider, simulateBuffer[collisions[i].aInd].transform.position,
@@ -133,21 +134,21 @@ namespace SimplePhysicsEngine
         }
     }
 
-    void PhysicsEngine::addObject(Object* obj)     
+    void PhysicsEngine::AddObject(Object* obj)     
     {
         woBufferLock.lock();
         waitingObjects.push_back(obj);
         woBufferLock.unlock();
     }
 
-    void PhysicsEngine::removeObject(int ID)
+    void PhysicsEngine::RemoveObject(int ID)
     {        
         rtBufferLock.lock();
         waitingRemoveTargets.push_back(ID);
         rtBufferLock.unlock();
     }
 
-    void PhysicsEngine::runPhysicsThread()
+    void PhysicsEngine::RunPhysicsThread()
     {
         physicsThread = std::thread(&PhysicsEngine::threadPhysicsUpdate, this);
         physicsThread.detach();
@@ -160,25 +161,22 @@ namespace SimplePhysicsEngine
         while (true)
         {
             clock_t currentfr = clock();
-            dt = (float)(currentfr - lastfr) * 0.0001f;
+            dt = (float)(currentfr - lastfr) * 0.05f;
             lastfr = currentfr;   
             removeObjectsAtWaitingQueue();
-            addObjectsAtWaitingQueue();
-            updatePhysics(0.1f);
-            std::this_thread::sleep_for(std::chrono::microseconds(10));
-        }
+            AddObjectsAtWaitingQueue();
+            UpdatePhysics(dt);            
+        }        
     }
         
 
     PhysicsData PhysicsEngine::PhysicsCopy(const Object& origin)
-    {
-        return SimplePhysicsEngine::PhysicsData(*origin.transform, *origin.rigidBody, *origin.aabb, *origin.collider);
-    }    
-
+    {   
+        return SimplePhysicsEngine::PhysicsData(origin.GetTransform(), *origin.rigidBody, *origin.aabb, *origin.collider);
+    }
+    
     bool PhysicsEngine::GJK(const MeshCollider* colliderA, utils::Vector3 posA , const MeshCollider* colliderB, utils::Vector3 posB)
     {
-        vector<CollisionPoints>().swap(collisionInfos);
-
         utils::Vector3 dir = utils::Vector3{ 1,0,0 };
                 
         auto wposColliderA = *colliderA + posA;
@@ -187,7 +185,7 @@ namespace SimplePhysicsEngine
         //initial support pnt
         utils::Vector3 support = Support(&wposColliderA, &wposColliderB, dir);      
         Simplex points;
-        points.push(support);
+        points.Push(support);
 
         //New direction is towards the origin
         dir = -support;
@@ -198,7 +196,7 @@ namespace SimplePhysicsEngine
             {              
                 return false;
             }
-            points.push(support);
+            points.Push(support);
             
             if (NextSimplex(points, dir))
             {
@@ -216,7 +214,7 @@ namespace SimplePhysicsEngine
 
     bool PhysicsEngine::NextSimplex(Simplex& points, utils::Vector3& dir)
     {
-        switch (points.size())
+        switch (points.Size())
         {
         case 2: return Line(points, dir);
         case 3: return Triangle(points, dir);
@@ -336,7 +334,7 @@ namespace SimplePhysicsEngine
 
     CollisionPoints PhysicsEngine::EPA(const Simplex& simplex, const MeshCollider* colliderA, const MeshCollider* colliderB)
     {
-        std::vector<utils::Vector3> polytope(simplex.begin(), simplex.end());
+        std::vector<utils::Vector3> polytope(simplex.Begin(), simplex.End());
         std::vector<size_t> faces =
         {
             0,1,2,
@@ -562,7 +560,6 @@ namespace SimplePhysicsEngine
                 friction = tan * -j * m;
             }
             //friction
-
 
             if (!isAKinematic)
             {

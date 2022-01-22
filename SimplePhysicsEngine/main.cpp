@@ -54,12 +54,12 @@ int main()
 
 	defaultShader = &ourShader;
 
-	glm::vec3 lightPos(5.0f, 5.0f, 5.0f);
+	glm::vec3 lightPos(10.0f, 10.0f, 10.0f);
 	ourShader.use();	
-	ourShader.setVec3("light.lightColor", 1.0f, 1.0f, 1.0f);
-	ourShader.setVec3("light.lightPos", lightPos.x, lightPos.y, lightPos.z);
+	ourShader.SetVec3("light.lightColor", 1.0f, 1.0f, 1.0f);
+	ourShader.SetVec3("light.lightPos", lightPos.x, lightPos.y, lightPos.z);
 
-	pEngine.runPhysicsThread();
+	pEngine.RunPhysicsThread();
 	//add light
 	SimplePhysicsEngine::Transform* transform = new SimplePhysicsEngine::Transform(utils::Vector3(lightPos.x, lightPos.y, lightPos.z));
 	SimplePhysicsEngine::RigidBody* rigidBody = new SimplePhysicsEngine::RigidBody(10.0f, 0.0f, zero, zero, true);
@@ -98,10 +98,10 @@ int main()
 		//Camera Setting
 
 		//Objects
-		auto objects = pEngine.getLatestBuffer();
+		auto objects = pEngine.GetLatestBuffer();
 		for (SimplePhysicsEngine::Object* obj : objects)
 		{
-			obj->draw(camera.Position, view, projection);
+			obj->Draw(camera.Position, view, projection);
 		}
 		//Objects
 
@@ -182,11 +182,11 @@ void ProcessInput(GLFWwindow* window)
 void AddSphereToPhysicsWorld(SimplePhysicsEngine::Transform* transform, SimplePhysicsEngine::RigidBody* rigidBody, SimplePhysicsEngine::Material* material, float radius, int sectorCount, int stackCount)
 {
 	SimplePhysicsEngine::Sphere* newSphere = new SimplePhysicsEngine::Sphere(transform, rigidBody, material, radius, sectorCount, stackCount);
-	pEngine.addObject(newSphere);
+	pEngine.AddObject(newSphere);
 }
 
 void AddPlaneToPhyscisWorld(SimplePhysicsEngine::Transform* transform, SimplePhysicsEngine::RigidBody* rigidBody, SimplePhysicsEngine::Material* material, float width, float height, float thickness)
 {
 	SimplePhysicsEngine::Plane* newPlane = new SimplePhysicsEngine::Plane(transform, rigidBody, material, width, height, thickness);
-	pEngine.addObject(newPlane);
+	pEngine.AddObject(newPlane);
 }

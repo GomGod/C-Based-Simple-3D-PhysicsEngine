@@ -63,14 +63,14 @@
     <ClCompile Include="PhysicsEngine.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MeshCollider.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Simplex.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Vector4.cpp">
       <Filter>소스 파일\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Simplex.cpp">
+      <Filter>소스 파일\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshCollider.cpp">
+      <Filter>소스 파일\Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -98,14 +98,14 @@
     <ClInclude Include="PhysicsEngine.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MeshCollider.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Simplex.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshCollider.h">
+      <Filter>헤더 파일\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Vector4.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

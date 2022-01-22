@@ -18,10 +18,10 @@ namespace SimplePhysicsEngine
 			this->radius = radius;
 			this->sectorCount = sectorCount;
 			this->stackCount = stackCount;
-			buildVertices();
+			BuildVertices();
 		}
 	private:
-		void buildVertices();
+		void BuildVertices();
 	};
 }
 

@@ -2,7 +2,7 @@
 
 namespace SimplePhysicsEngine
 {
-    void Sphere::buildVertices()
+    void Sphere::BuildVertices()
     {
         const float PI = acos(-1);
 
@@ -71,7 +71,7 @@ namespace SimplePhysicsEngine
         aabb->minZ = minZ;
         aabb->maxZ = maxZ;
 
-        clearArrays();        
+        ClearArrays();        
 
         Vertex v1, v2, v3, v4;
         std::vector<float> n;
@@ -95,57 +95,57 @@ namespace SimplePhysicsEngine
 
                 if (i == 0)
                 {
-                    addVertex(v1.x, v1.y, v1.z);
-                    addVertex(v2.x, v2.y, v2.z);
-                    addVertex(v4.x, v4.y, v4.z);
+                    AddVertex(v1.x, v1.y, v1.z);
+                    AddVertex(v2.x, v2.y, v2.z);
+                    AddVertex(v4.x, v4.y, v4.z);
 
 
-                    n = getFaceNormal(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v4.x, v4.y, v4.z);
+                    n = GetFaceNormal(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v4.x, v4.y, v4.z);
                     for (k = 0; k < 3; ++k)
                     {
-                        addNormal(n[0], n[1], n[2]);
+                        AddNormal(n[0], n[1], n[2]);
                     }
 
-                    addIndices(index, index + 1, index + 2);
+                    AddIndices(index, index + 1, index + 2);
 
 
                     index += 3;
                 }
                 else if (i == (stackCount - 1))
                 {
-                    addVertex(v1.x, v1.y, v1.z);
-                    addVertex(v2.x, v2.y, v2.z);
-                    addVertex(v3.x, v3.y, v3.z);
+                    AddVertex(v1.x, v1.y, v1.z);
+                    AddVertex(v2.x, v2.y, v2.z);
+                    AddVertex(v3.x, v3.y, v3.z);
 
                     for (k = 0; k < 3; ++k)
                     {
-                        addNormal(n[0], n[1], n[2]);
+                        AddNormal(n[0], n[1], n[2]);
                     }
 
-                    addIndices(index, index + 1, index + 2);
+                    AddIndices(index, index + 1, index + 2);
 
                     index += 3;
                 }
                 else
                 {
-                    addVertex(v1.x, v1.y, v1.z);
-                    addVertex(v2.x, v2.y, v2.z);
-                    addVertex(v3.x, v3.y, v3.z);
-                    addVertex(v4.x, v4.y, v4.z);
+                    AddVertex(v1.x, v1.y, v1.z);
+                    AddVertex(v2.x, v2.y, v2.z);
+                    AddVertex(v3.x, v3.y, v3.z);
+                    AddVertex(v4.x, v4.y, v4.z);
 
-                    n = getFaceNormal(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z);
+                    n = GetFaceNormal(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z);
                     for (k = 0; k < 4; ++k)
                     {
-                        addNormal(n[0], n[1], n[2]);
+                        AddNormal(n[0], n[1], n[2]);
                     }
 
-                    addIndices(index, index + 1, index + 2);
-                    addIndices(index + 2, index + 1, index + 3);
+                    AddIndices(index, index + 1, index + 2);
+                    AddIndices(index + 2, index + 1, index + 3);
 
                     index += 4;
                 }
             }
         }                
-        buildInterleavedVertices();
+        BuildInterleavedVertices();
     }
 }
