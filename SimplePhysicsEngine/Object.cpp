@@ -2,18 +2,6 @@
 
 namespace SimplePhysicsEngine
 {   
-    void Object::UpdateTranform(utils::Vector3 position, utils::Vector3 rotation)
-    {
-        transform->position = position;
-        transform->rotation = rotation;
-    }
-
-    void Object::UpdatePhysics(utils::Vector3 velocity, utils::Vector3 forces)
-    {        
-        rigidBody->velocity = velocity;
-        rigidBody->forces = forces;
-    }
-
     void Object::BuildInterleavedVertices()
     {
         std::vector<float>().swap(interleavedVertexAttrib);
@@ -119,6 +107,18 @@ namespace SimplePhysicsEngine
         glEnableVertexAttribArray(1);
 
         glBindVertexArray(0); // Unbind VAO        
+    }
+
+    void Object::UpdateTranform(glm::vec3 position, glm::vec3 rotation)
+    {
+        transform->position = position;
+        transform->rotation = rotation;
+    }
+
+    void Object::UpdatePhysics(glm::vec3 velocity, glm::vec3 forces)
+    {
+        rigidBody->velocity = velocity;
+        rigidBody->forces = forces;
     }
 
     void Object::Draw(glm::vec3 cameraPos, glm::mat4 view, glm::mat4 projection)

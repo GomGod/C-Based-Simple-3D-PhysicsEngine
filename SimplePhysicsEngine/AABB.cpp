@@ -16,7 +16,7 @@ void AABB::ScaleRoot2()
     minZ -= zOffset;
 }
 
-bool AABB::TestAABBCollision(const utils::Vector3& point)
+bool AABB::TestAABBCollision(const glm::vec3& point)
 {
     return (minX < point.x&& point.x < maxX) &&
         (minY < point.y&& point.y < maxY) &&
@@ -31,7 +31,7 @@ bool AABB::TestAABBCollision(const AABB& box)
     return true;
 }
 
-AABB& AABB::operator+(const utils::Vector3& pos)
+AABB& AABB::operator+(const glm::vec3& pos)
 {
     return AABB{ minX + pos.x, maxX + pos.x, minY + pos.y, maxY + pos.y, minZ + pos.z, maxZ + pos.z };
 }

@@ -1,34 +1,19 @@
 #pragma once
 #include<vector>
-#include"Vector3.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include"AABB.h"
 
 class MeshCollider
 {	
 public:	
-	AABB aabb;
-	std::vector<utils::Vector3> colliderVertices;
-	utils::Vector3 FindFurthestPoint(utils::Vector3 dir) const;
+	AABB aabb = AABB();
+	std::vector<glm::vec3> colliderVertices;
+	glm::vec3 FindFurthestPoint(glm::vec3 dir) const;
 	void BuildColliderVertices(float* vertices, int count);
 
-	MeshCollider& operator() (const MeshCollider& origin)
-	{
-		auto ret = new MeshCollider;
-		ret->colliderVertices = origin.colliderVertices;
-
-		return *ret;
-	}
-
-	MeshCollider& operator+ (const utils::Vector3 pos) const
-	{		
-		auto vertices = colliderVertices;		
-		for (auto& vertex : vertices)
-		{
-			vertex += pos;
-		}		
-		MeshCollider* ret = new MeshCollider;
-		ret->colliderVertices = vertices;
-
-		return *ret;
-	}
+	MeshCollider& operator() (const MeshCollider& origin);
+	MeshCollider& operator+ (const glm::vec3& pos) const;	
 };

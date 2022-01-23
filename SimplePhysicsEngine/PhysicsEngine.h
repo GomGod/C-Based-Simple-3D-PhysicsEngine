@@ -7,9 +7,13 @@
 #include <queue>
 #include <mutex>
 #include <utility>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-#include "Vector4.h"
+
 #include "Object.h"
+#include "Rigidbody.h"
 #include "MeshCollider.h"
 #include "Simplex.h"
 
@@ -36,7 +40,7 @@ namespace SimplePhysicsEngine
     {
         int aInd;
         int bInd;
-        utils::Vector3 normal;
+        glm::vec3 normal;
         float depth;
         bool hasCollision;
     };
@@ -44,7 +48,7 @@ namespace SimplePhysicsEngine
     class PhysicsEngine 
     {
     private:
-        utils::Vector3 defaultGravity{ 0,-0.098f,0 };
+        glm::vec3 defaultGravity{ 0,-0.098f,0 };
         std::thread physicsThread;
                 
 //critical section
@@ -69,17 +73,17 @@ namespace SimplePhysicsEngine
         void PreDetectCollision();
         void SecondDetectCollision();
 
-        bool GJK(const MeshCollider* colliderA, utils::Vector3 posA, utils::Vector3 rotA, const MeshCollider* colliderB, utils::Vector3 posB,utils::Vector3 rotB);
-        utils::Vector3 Support(const MeshCollider* colliderA, const MeshCollider* colliderB, utils::Vector3 dir);
-        bool NextSimplex(Simplex& points, utils::Vector3& dir);
-        bool SameDirection(const utils::Vector3& dir, const utils::Vector3 ao);
-        bool Line(Simplex& points, utils::Vector3& dir);
-        bool Triangle(Simplex& points, utils::Vector3& dir);
-        bool Tetrahedron(Simplex& points, utils::Vector3& dir);
+        bool GJK(const MeshCollider* colliderA, glm::vec3 posA, glm::vec3 rotA, const MeshCollider* colliderB, glm::vec3 posB, glm::vec3 rotB);
+        glm::vec3 Support(const MeshCollider* colliderA, const MeshCollider* colliderB, glm::vec3 dir);
+        bool NextSimplex(Simplex& points, glm::vec3& dir);
+        bool SameDirection(const glm::vec3& dir, const glm::vec3& ao);
+        bool Line(Simplex& points, glm::vec3& dir);
+        bool Triangle(Simplex& points, glm::vec3& dir);
+        bool Tetrahedron(Simplex& points, glm::vec3& dir);
 
         //EPA
         CollisionPoints EPA(const Simplex& simplex, const MeshCollider* colliderA, const MeshCollider* colliderB);
-        std::pair<std::vector<utils::Vector4>, size_t> GetFaceNormals(const std::vector<utils::Vector3>& polytope, const std::vector<size_t>& faces);
+        std::pair<std::vector<glm::vec4>, size_t> GetFaceNormals(const std::vector<glm::vec3>& polytope, const std::vector<size_t>& faces);
         void AddIfUniqueEdge(std::vector <std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b);
 
         //Collision Solver

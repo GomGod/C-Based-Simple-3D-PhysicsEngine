@@ -1,9 +1,9 @@
 #pragma once
 #ifndef SIMPLEPHYSICSENGINE_OBJECT_H
 #define SIMPLEPHYSICSENGINE_OBJECT_H
-#include "Vector3.h"
 #include "Shader.h"
 #include "MeshCollider.h"
+#include "Rigidbody.h"
 
 #include "glad/glad.h"		
 #include "GLFW/glfw3.h" 
@@ -17,10 +17,10 @@ namespace SimplePhysicsEngine
 {
     struct Transform
     {
-        utils::Vector3 position;
-        utils::Vector3 rotation;
+        glm::vec3 position;
+        glm::vec3 rotation;
     
-        Transform(utils::Vector3 position = utils::Vector3{ 0, 0, 0 }, utils::Vector3 rotation = utils::Vector3{ 0, 0, 0 })
+        Transform(glm::vec3 position = glm::vec3(0), glm::vec3 rotation = glm::vec3(0))
         {
             this->position = position;
             this->rotation = rotation;
@@ -35,48 +35,17 @@ namespace SimplePhysicsEngine
 
     struct Material
     {
-        utils::Vector3 ambient;
-        utils::Vector3 diffuse;
-        utils::Vector3 specular;
-        utils::Vector3 color;
+        glm::vec3 ambient;
+        glm::vec3 diffuse;
+        glm::vec3 specular;
+        glm::vec4 color;
         Shader* shader;
 
-        Material(Shader* shader, utils::Vector3 color = utils::Vector3{ 1.0f, 1.0f, 1.0f }, utils::Vector3 ambient = utils::Vector3{ 0.5f, 0.5f, 0.5f }, utils::Vector3 diffuse = utils::Vector3{ 0.5f, 0.5f, 0.5f }, utils::Vector3 specular = utils::Vector3{ 0.5f, 0.5f, 0.5f }) :shader(shader), color(color), ambient(ambient), diffuse(diffuse), specular(specular)
+        Material(Shader* shader, glm::vec4 color = glm::vec4(1.0f), glm::vec3 ambient = glm::vec3(0.5f), glm::vec3 diffuse = glm::vec3(0.5f), glm::vec3 specular = glm::vec3(0.5f)) :shader(shader), color(color), ambient(ambient), diffuse(diffuse), specular(specular)
         {}        
     };
 
-    struct RigidBody
-    {
-        float mass;
-        float gravity;
-        utils::Vector3 velocity;
-        utils::Vector3 forces;
-        bool isKinematic;
-
-        float staticFriction;
-        float dynamicFriction;
-        float bounciness;
-
-        RigidBody(float mass = 10.0f, float gravity = 1.0f, utils::Vector3 velocity = utils::Vector3{0,0,0}, utils::Vector3 forces= utils::Vector3{ 0,0,0 }, bool isKinematic=false) :mass(mass), gravity(gravity), velocity(velocity), forces(forces), isKinematic(isKinematic)
-        {
-            staticFriction = 0.5f;
-            dynamicFriction = 0.5f;
-            bounciness = 0.5f;
-        }
-
-        RigidBody(const RigidBody& origin)
-        {
-            mass = origin.mass;
-            gravity = origin.gravity;
-            velocity = origin.velocity;
-            forces = origin.forces;
-            isKinematic = origin.isKinematic;
-            staticFriction = origin.staticFriction;
-            dynamicFriction = origin.dynamicFriction;
-            bounciness = origin.bounciness;
-        }
-    };
-
+    
     class Object {
     public:
         //For Manage Object
@@ -113,8 +82,8 @@ namespace SimplePhysicsEngine
             delete aabb;
         }
 
-        void Object::UpdateTranform(utils::Vector3 position, utils::Vector3 rotation);
-        void Object::UpdatePhysics(utils::Vector3 velocity, utils::Vector3 forces);
+        void Object::UpdateTranform(glm::vec3 position, glm::vec3 rotation);
+        void Object::UpdatePhysics(glm::vec3 velocity, glm::vec3 forces);
 
         //Rendering for OpenGL   
         void SetShader(Shader* shader) { material->shader = shader; }

@@ -1,19 +1,19 @@
 #include "MeshCollider.h"
 
-utils::Vector3 MeshCollider::FindFurthestPoint(utils::Vector3 dir) const
+glm::vec3 MeshCollider::FindFurthestPoint(glm::vec3 dir) const
 {
-	utils::Vector3 maxCoord;
+	glm::vec3 maxCoord = glm::vec3(0);
 	float maxDist = -FLT_MAX;
-		
-	for (utils::Vector3 vertex : colliderVertices)
-	{	
-		float distance = utils::Vector3::DotProduct(vertex, dir);		
+
+	for (glm::vec3 vertex : colliderVertices)
+	{
+		float distance = glm::dot(vertex, dir);			
 
 		if (distance > maxDist)
 		{
 			maxDist = distance;
 			maxCoord = vertex;
-		}		
+		}
 	}
 
 	return maxCoord;
@@ -24,7 +24,7 @@ void MeshCollider::BuildColliderVertices(float* vertices, int count)
 	float minX = FLT_MAX, maxX = FLT_MIN, minY = FLT_MAX, maxY = FLT_MIN, minZ = FLT_MAX, maxZ = FLT_MIN;
 	for (auto i = 0; i + 2 < count; i += 3)
 	{
-		auto vertex = utils::Vector3{ vertices[i],vertices[i + 1],vertices[i + 2] };
+		auto vertex = glm::vec3{ vertices[i],vertices[i + 1],vertices[i + 2] };
 		colliderVertices.push_back(vertex);
 
 		if (minX > vertices[i]) minX = vertex.x;
@@ -44,4 +44,25 @@ void MeshCollider::BuildColliderVertices(float* vertices, int count)
 	aabb.maxY = maxY;
 	aabb.maxZ = maxZ;
 	aabb.ScaleRoot2();
+}
+
+MeshCollider& MeshCollider::operator()(const MeshCollider& origin)
+{
+	auto ret = new MeshCollider;
+	ret->colliderVertices = origin.colliderVertices;
+
+	return *ret;
+}
+
+MeshCollider& MeshCollider::operator+(const glm::vec3& pos) const
+{
+	auto vertices = colliderVertices;
+	for (auto& vertex : vertices)
+	{
+		vertex += pos;
+	}
+	MeshCollider* ret = new MeshCollider;
+	ret->colliderVertices = vertices;
+
+	return *ret;
 }

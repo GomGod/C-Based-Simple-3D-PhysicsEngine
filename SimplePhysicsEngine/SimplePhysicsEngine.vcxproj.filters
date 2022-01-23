@@ -34,6 +34,9 @@
     <Filter Include="헤더 파일\Collision">
       <UniqueIdentifier>{f406ff29-f66e-4678-af4d-4ec13fd92162}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Dynamics">
+      <UniqueIdentifier>{c711d230-8373-4f68-ae9c-57061a33879c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -43,9 +46,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>소스 파일\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector3.cpp">
       <Filter>소스 파일\Utils</Filter>
     </ClCompile>
     <ClCompile Include="Sphere.cpp">
@@ -63,9 +63,6 @@
     <ClCompile Include="PhysicsEngine.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Vector4.cpp">
-      <Filter>소스 파일\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Simplex.cpp">
       <Filter>소스 파일\Collision</Filter>
     </ClCompile>
@@ -73,6 +70,9 @@
       <Filter>소스 파일\Collision</Filter>
     </ClCompile>
     <ClCompile Include="AABB.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Rigidbody.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -85,9 +85,6 @@
     </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>헤더 파일\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>헤더 파일\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>헤더 파일\Utils</Filter>
@@ -107,10 +104,10 @@
     <ClInclude Include="MeshCollider.h">
       <Filter>헤더 파일\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Vector4.h">
-      <Filter>헤더 파일\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="AABB.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Rigidbody.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

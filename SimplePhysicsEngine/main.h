@@ -17,6 +17,7 @@
 #include "Camera.h"
 #include "Objects.h"
 #include <list>
+#include "Rigidbody.h"
 
 
 //GLFW
@@ -32,7 +33,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 //PhysicsEngine
 void AddPlaneToPhyscisWorld(SimplePhysicsEngine::Transform* transform, SimplePhysicsEngine::RigidBody* rigidBody, SimplePhysicsEngine::Material* material, float width, float height, float thickness);
 void AddSphereToPhysicsWorld(SimplePhysicsEngine::Transform* transform, SimplePhysicsEngine::RigidBody* rigidBody, SimplePhysicsEngine::Material* material, float radius, int sectorCount, int stackCount);
-utils::Vector3 zero(0, 0, 0);
+glm::vec3 zero(0, 0, 0);
 
 const char* vertexShaderPath = "vertexShader.vs";
 const char* fragmentShaderPath = "fragmentShader.fs";

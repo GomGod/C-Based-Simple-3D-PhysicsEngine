@@ -27,11 +27,10 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Simplex.cpp" />
     <ClCompile Include="Sphere.cpp" />
-    <ClCompile Include="Vector3.cpp" />
-    <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
@@ -41,11 +40,10 @@
     <ClInclude Include="Objects.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Simplex.h" />
     <ClInclude Include="Sphere.h" />
-    <ClInclude Include="Vector3.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="Vector4.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="vertexShader.vs" />

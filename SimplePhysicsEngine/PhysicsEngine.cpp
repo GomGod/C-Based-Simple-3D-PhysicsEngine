@@ -22,8 +22,10 @@ namespace SimplePhysicsEngine
         for (auto i=0; i < simulateBuffer.size(); i+=1)
         {            
             auto& rb = simulateBuffer[i].rigidBody;
-            auto& tf = simulateBuffer[i].transform;
             if (rb.isKinematic) continue;
+            auto& tf = simulateBuffer[i].transform;
+
+
             rb.forces += defaultGravity;                        
             rb.velocity += rb.forces / rb.mass * dt;
             tf.position += rb.velocity * dt;
@@ -175,7 +177,7 @@ namespace SimplePhysicsEngine
         return SimplePhysicsEngine::PhysicsData(*origin.transform, *origin.rigidBody, *origin.collider);
     }
     
-    bool PhysicsEngine::GJK(const MeshCollider* colliderA, utils::Vector3 posA, utils::Vector3 rotA, const MeshCollider* colliderB, utils::Vector3 posB, utils::Vector3 rotB)
+    bool PhysicsEngine::GJK(const MeshCollider* colliderA, glm::vec3 posA, glm::vec3 rotA, const MeshCollider* colliderB, glm::vec3 posB, glm::vec3 rotB)
     {   
         //Transform Colliders
         MeshCollider wposColliderA = *colliderA;
@@ -211,8 +213,8 @@ namespace SimplePhysicsEngine
 
 
         //initial support pnt
-        utils::Vector3 dir = utils::Vector3{ 1,0,0 };
-        utils::Vector3 support = Support(&wposColliderA, &wposColliderB, dir);      
+        glm::vec3 dir = glm::vec3{ 1,0,0 };
+        glm::vec3 support = Support(&wposColliderA, &wposColliderB, dir);
         Simplex points;
         points.Push(support);
 
@@ -221,7 +223,7 @@ namespace SimplePhysicsEngine
         while (true)
         {
             support = Support(&wposColliderA, &wposColliderB, dir);                        
-            if (utils::Vector3::DotProduct(support, dir) <= 0)
+            if (glm::dot(support, dir) <=0)                
             {              
                 return false;
             }
@@ -236,12 +238,12 @@ namespace SimplePhysicsEngine
         }
     }
 
-    utils::Vector3 PhysicsEngine::Support(const MeshCollider* colliderA, const MeshCollider* colliderB, utils::Vector3 dir)
+    glm::vec3 PhysicsEngine::Support(const MeshCollider* colliderA, const MeshCollider* colliderB, glm::vec3 dir)
     {
         return colliderA->FindFurthestPoint(dir) - colliderB->FindFurthestPoint(-dir);
     }
 
-    bool PhysicsEngine::NextSimplex(Simplex& points, utils::Vector3& dir)
+    bool PhysicsEngine::NextSimplex(Simplex& points, glm::vec3& dir)
     {
         switch (points.Size())
         {
@@ -252,12 +254,12 @@ namespace SimplePhysicsEngine
         return false;
     }
 
-    bool PhysicsEngine::SameDirection(const utils::Vector3& dir, const utils::Vector3 ao)
+    bool PhysicsEngine::SameDirection(const glm::vec3& dir, const glm::vec3& ao)
     {
-        return utils::Vector3::DotProduct(dir, ao) > 0;
+        return glm::dot(dir, ao) > 0;
     }
 
-    bool PhysicsEngine::Line(Simplex& points, utils::Vector3& dir)
+    bool PhysicsEngine::Line(Simplex& points, glm::vec3& dir)
     {
         auto a = points[0];
         auto b = points[1];
@@ -267,8 +269,9 @@ namespace SimplePhysicsEngine
 
         if (SameDirection(ab, ao))
         {            
-            dir = utils::Vector3::CrossProduct(ab, ao);
-            dir = utils::Vector3::CrossProduct(dir, ab);
+            dir = glm::cross(ab, ao);
+            dir = glm::cross(ab, ao);
+            dir = glm::cross(dir, ab);
         }
         else
         {
@@ -279,25 +282,25 @@ namespace SimplePhysicsEngine
         return false;
     }
 
-    bool PhysicsEngine::Triangle(Simplex& points, utils::Vector3& dir)
+    bool PhysicsEngine::Triangle(Simplex& points, glm::vec3& dir)
     {
-        utils::Vector3 a = points[0];
-        utils::Vector3 b = points[1];
-        utils::Vector3 c = points[2];
+        glm::vec3 a = points[0];
+        glm::vec3 b = points[1];
+        glm::vec3 c = points[2];
 
-        utils::Vector3 ab = b - a;
-        utils::Vector3 ac = c - a;
-        utils::Vector3 ao = -a;
+        glm::vec3 ab = b - a;
+        glm::vec3 ac = c - a;
+        glm::vec3 ao = -a;
 
-        utils::Vector3 abc = utils::Vector3::CrossProduct(ab, ac);
+        glm::vec3 abc = glm::cross(ab, ac);
 
-        if (SameDirection(utils::Vector3::CrossProduct(abc, ac), ao))
+        if (SameDirection(glm::cross(abc, ac), ao))
         {
             if (SameDirection(ac, ao))
             {
                 points = { a,c };
-                dir = utils::Vector3::CrossProduct(ac, ao);
-                dir = utils::Vector3::CrossProduct(dir, ac);
+                dir = glm::cross(ac, ao);
+                dir = glm::cross(dir, ac);
             }
             else
             {
@@ -306,7 +309,7 @@ namespace SimplePhysicsEngine
         }
         else
         {
-            if (SameDirection(utils::Vector3::CrossProduct(ab, abc), ao))
+            if (SameDirection(glm::cross(ab, abc), ao))
             {
                 return Line(points = { a,b }, dir);
             }
@@ -328,21 +331,21 @@ namespace SimplePhysicsEngine
         return false;        
     }
 
-    bool PhysicsEngine::Tetrahedron(Simplex& points, utils::Vector3& dir)
+    bool PhysicsEngine::Tetrahedron(Simplex& points, glm::vec3& dir)
     {
-        utils::Vector3 a = points[0];
-        utils::Vector3 b = points[1];
-        utils::Vector3 c = points[2];
-        utils::Vector3 d = points[3];
+        glm::vec3 a = points[0];
+        glm::vec3 b = points[1];
+        glm::vec3 c = points[2];
+        glm::vec3 d = points[3];
 
-        utils::Vector3 ab = b - a;
-        utils::Vector3 ac = c - a;
-        utils::Vector3 ad = d - a;
-        utils::Vector3 ao = -a;
+        glm::vec3 ab = b - a;
+        glm::vec3 ac = c - a;
+        glm::vec3 ad = d - a;
+        glm::vec3 ao = -a;
 
-        utils::Vector3 abc = utils::Vector3::CrossProduct(ab, ac);
-        utils::Vector3 acd = utils::Vector3::CrossProduct(ac, ad);
-        utils::Vector3 adb = utils::Vector3::CrossProduct(ad, ab);
+        glm::vec3 abc = glm::cross(ab, ac);
+        glm::vec3 acd = glm::cross(ac, ad);
+        glm::vec3 adb = glm::cross(ad, ab);
 
         if (SameDirection(abc, ao))
         {
@@ -363,7 +366,7 @@ namespace SimplePhysicsEngine
 
     CollisionPoints PhysicsEngine::EPA(const Simplex& simplex, const MeshCollider* colliderA, const MeshCollider* colliderB)
     {
-        std::vector<utils::Vector3> polytope(simplex.Begin(), simplex.End());
+        std::vector<glm::vec3> polytope(simplex.Begin(), simplex.End());
         std::vector<size_t> faces =
         {
             0,1,2,
@@ -376,13 +379,13 @@ namespace SimplePhysicsEngine
         auto normals = faceNormalData.first;
         auto minFace = faceNormalData.second;
 
-        utils::Vector3 minNormal;
+        glm::vec3 minNormal;
         float minDistance = FLT_MAX;
 
         size_t iterations = 0;
         while (minDistance == FLT_MAX)
         {
-            minNormal = normals[minFace].xyz();
+            minNormal = glm::vec3(normals[minFace]);
             minDistance = normals[minFace].w;
 
             if (iterations++ > 32)
@@ -390,8 +393,8 @@ namespace SimplePhysicsEngine
                 break;
             }
 
-            utils::Vector3 support = Support(colliderA, colliderB, minNormal);
-            float sDist = utils::Vector3::DotProduct(minNormal, support);
+            glm::vec3 support = Support(colliderA, colliderB, minNormal);
+            float sDist = glm::dot(minNormal, support);
 
             if (abs(sDist - minDistance) > 0.001f)
             {
@@ -465,9 +468,9 @@ namespace SimplePhysicsEngine
         return points;
     }
 
-    std::pair<std::vector<utils::Vector4>, size_t> PhysicsEngine::GetFaceNormals(const std::vector<utils::Vector3>& polytope, const std::vector<size_t>& faces)
+    std::pair<std::vector<glm::vec4>, size_t> PhysicsEngine::GetFaceNormals(const std::vector<glm::vec3>& polytope, const std::vector<size_t>& faces)
     {
-        std::vector<utils::Vector4> normals;
+        std::vector<glm::vec4> normals;
         size_t minTriangle = 0;
         float minDistance = FLT_MAX;
 
@@ -477,9 +480,9 @@ namespace SimplePhysicsEngine
             auto b = polytope[faces[i+1]];
             auto c = polytope[faces[i+2]];
 
-            auto cross = utils::Vector3::CrossProduct((b - a), (c - a));
-            auto normal = utils::Vector3::Normalize(cross);
-            float dist = utils::Vector3::DotProduct(normal, a);
+            auto cross = glm::cross((b - a), (c - a));
+            auto normal = glm::normalize(cross);
+            float dist = glm::dot(normal, a);
 
             if (dist < 0)
             {
@@ -487,11 +490,7 @@ namespace SimplePhysicsEngine
                 dist *= -1;
             }
 
-            auto normalWithDist = utils::Vector4();
-            normalWithDist.x = normal.x;
-            normalWithDist.y = normal.y;
-            normalWithDist.z = normal.z;
-            normalWithDist.w = dist;
+            auto normalWithDist = glm::vec4(normal, dist);
             normals.emplace_back(normalWithDist);
 
             if (dist < minDistance)
@@ -531,10 +530,10 @@ namespace SimplePhysicsEngine
             bool isAKinematic = aPhysicsData.rigidBody.isKinematic;
             bool isBKinematic = bPhysicsData.rigidBody.isKinematic;
 
-            auto aVelocity = isAKinematic ? utils::Vector3(0, 0, 0) : aPhysicsData.rigidBody.velocity;
-            auto bVelocity = isBKinematic ? utils::Vector3(0, 0, 0) : bPhysicsData.rigidBody.velocity;
+            auto aVelocity = isAKinematic ? glm::vec3(0) : aPhysicsData.rigidBody.velocity;
+            auto bVelocity = isBKinematic ? glm::vec3(0) : bPhysicsData.rigidBody.velocity;
             auto rVelocity = bVelocity - aVelocity;
-            float spd = utils::Vector3::DotProduct(rVelocity, cInfo.normal);
+            float spd = glm::dot(rVelocity, cInfo.normal);
 
             float aInvMass = isAKinematic ? 1.0f : 1.0f / aPhysicsData.rigidBody.mass;
             float bInvMass = isBKinematic ? 1.0f : 1.0f / bPhysicsData.rigidBody.mass;
@@ -545,7 +544,7 @@ namespace SimplePhysicsEngine
             float e = aPhysicsData.rigidBody.bounciness * bPhysicsData.rigidBody.bounciness;
             float j = -(1.0f + e) * spd / (aInvMass + bInvMass);
 
-            utils::Vector3 impulse = cInfo.normal * j;
+            glm::vec3 impulse = cInfo.normal * j;
 
             if (!isAKinematic)
             {
@@ -559,33 +558,33 @@ namespace SimplePhysicsEngine
 
             //friction
             rVelocity = bVelocity - aVelocity;
-            spd = utils::Vector3::DotProduct(rVelocity, cInfo.normal);
+            spd = glm::dot(rVelocity, cInfo.normal);
 
-            utils::Vector3 tan = rVelocity - (cInfo.normal*spd);
+            glm::vec3 tan = rVelocity - (cInfo.normal*spd);
 
-            if (tan.GetMagnitude() > 0.0001f)
+            if (glm::length(tan) > 0.0001f)
             {
-                tan = utils::Vector3::Normalize(tan);
+                tan = glm::normalize(tan);
             }
 
-            float fVelocity = utils::Vector3::DotProduct(rVelocity, tan);
+            float fVelocity = glm::dot(rVelocity, tan);
 
             float aStaticFric = aPhysicsData.rigidBody.staticFriction;
             float bStaticFric = bPhysicsData.rigidBody.staticFriction;
             float aDynamicFric = aPhysicsData.rigidBody.dynamicFriction;
             float bDynamicFric = bPhysicsData.rigidBody.dynamicFriction;
-            float m = utils::Vector3(aStaticFric, bStaticFric, 0).GetMagnitude();
+            float m = glm::length(glm::vec3(aStaticFric, bStaticFric, 0));
 
             float fric = -fVelocity / (aInvMass + bInvMass);
 
-            utils::Vector3 friction;
+            glm::vec3 friction;
             if (abs(fric) < j * m)
             {
                 friction = tan * fric;
             }
             else
             {
-                m = utils::Vector3(aDynamicFric, bDynamicFric, 0).GetMagnitude();
+                m = glm::length(glm::vec3(aDynamicFric, bDynamicFric, 0));
                 friction = tan * -j * m;
             }
             //friction
@@ -609,7 +608,7 @@ namespace SimplePhysicsEngine
             PhysicsData& aPhysicsData = simulateBuffer[cInfo.aInd];
             PhysicsData& bPhysicsData = simulateBuffer[cInfo.bInd];
 
-            utils::Vector3 resolution = cInfo.normal * cInfo.depth;           
+            glm::vec3 resolution = cInfo.normal * cInfo.depth;           
 
             if (!aPhysicsData.rigidBody.isKinematic && !bPhysicsData.rigidBody.isKinematic)
                 resolution = resolution / 2.0f;
