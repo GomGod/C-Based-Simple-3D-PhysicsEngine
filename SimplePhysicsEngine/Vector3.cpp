@@ -42,6 +42,11 @@ namespace utils {
         return Vector3(nx, ny, nz);
     }
 
+    Vector3 Vector3::Lerp(Vector3 depart, Vector3 dest, float rate)
+    {
+        return depart * rate + dest * (1.0f - rate);
+    }
+
     float Vector3::GetVectorSize() const {
         float powDist = x * x + y * y + z * z;
         return sqrt(powDist);

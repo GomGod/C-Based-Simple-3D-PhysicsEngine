@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Camera.h" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
@@ -33,6 +34,7 @@
     <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="MeshCollider.h" />
     <ClInclude Include="Object.h" />

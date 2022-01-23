@@ -15,38 +15,6 @@
 
 namespace SimplePhysicsEngine
 {
-    struct AABB
-    {
-        float minX, maxX;
-        float minY, maxY;
-        float minZ, maxZ;
-
-        bool TestAABBCollision(const utils::Vector3& point)
-        {
-            return (minX < point.x && point.x < maxX) &&
-                (minY < point.y && point.y < maxY) &&
-                (minZ < point.z && point.z < maxZ);
-        }
-
-        bool TestAABBCollision(const AABB& box)
-        {   
-            if (maxX < box.minX || minX > box.maxX) return false;
-            if (maxY < box.minY || minY > box.maxY) return false;
-            if (maxZ < box.minZ || minZ > box.maxZ) return false;
-            return true;        
-        }
-
-        AABB& operator+ (const utils::Vector3& pos)
-        {
-            return AABB{ minX + pos.x, maxX + pos.x, minY + pos.y, maxY + pos.y, minZ + pos.z, maxZ + pos.z };
-        }
-
-        AABB& operator& (const AABB& origin)
-        {
-            return AABB{ origin.minX , origin.maxX , origin.minY , origin.maxY , origin.minZ, origin.maxZ };
-        }
-    };
-
     struct Transform
     {
         utils::Vector3 position;
@@ -114,7 +82,8 @@ namespace SimplePhysicsEngine
         //For Manage Object
         int ID;
 
-        //Vars for physics        
+        //Vars for physics     
+        Transform* transform;
         RigidBody* rigidBody;
         MeshCollider* collider;
         AABB* aabb;
@@ -171,29 +140,7 @@ namespace SimplePhysicsEngine
 
         void Draw(glm::vec3 cameraPos, glm::mat4 view, glm::mat4 projection);
 
-        Transform GetTransform() const { return *transform; }
-        Transform SetTransform(Transform tf)
-        {
-            transform->position = tf.position;
-            transform->rotation = tf.rotation;
-            UpdateAABB();
-        }
-        void UpdatePosition(utils::Vector3 pos)
-        {
-            transform->position = pos;
-        }
-        void UpdateRotation(utils::Vector3 rot)
-        {
-            transform->rotation = rot;
-            UpdateAABB();
-        }
-
-
-    protected:
-        Transform* transform;
-        //For Physics
-        void UpdateAABB();
-
+    protected:        
         //Rendering for OpenGL    
         std::vector<float> vertices;
         std::vector<float> normals;

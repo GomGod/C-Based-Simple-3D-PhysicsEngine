@@ -14,39 +14,6 @@ namespace SimplePhysicsEngine
         rigidBody->forces = forces;
     }
 
-    void Object::UpdateAABB()
-    {
-        float minX = FLT_MAX, maxX = FLT_MIN, minY = FLT_MAX, maxY = FLT_MIN, minZ = FLT_MAX, maxZ = FLT_MIN;
-
-        auto vCount = GetVertexCount();
-        glm::mat4 rotateMatrix = glm::mat4(1.0f);
-        rotateMatrix = glm::rotate(rotateMatrix, glm::radians(-transform->rotation.x), glm::vec3(1, 0, 0));
-        rotateMatrix = glm::rotate(rotateMatrix, glm::radians(transform->rotation.y), glm::vec3(0, 1, 0));
-        rotateMatrix = glm::rotate(rotateMatrix, glm::radians(-transform->rotation.z), glm::vec3(0, 0, 1));
-
-        for (auto i = 0; i + 2 < vCount; i += 1)
-        {
-            auto vertex = glm::vec3(vertices[i], vertices[i + 1], vertices[i + 2]);
-            vertex = glm::vec4(vertex, 1.0) * rotateMatrix;
-
-            if (minX > vertices[i]) minX = vertex.x;
-            if (maxX < vertices[i]) maxX = vertex.x;
-
-            if (minY > vertices[i + 1]) minY = vertex.y;
-            if (maxY < vertices[i + 1]) maxY = vertex.y;
-
-            if (minZ > vertices[i + 2]) minZ = vertex.z;
-            if (maxZ < vertices[i + 2]) maxZ = vertex.z;
-        }
-
-        aabb->minX = minX;
-        aabb->minY = minY;
-        aabb->minZ = minZ;
-        aabb->maxX = maxX;
-        aabb->maxY = maxY;
-        aabb->maxZ = maxZ;
-    }
-
     void Object::BuildInterleavedVertices()
     {
         std::vector<float>().swap(interleavedVertexAttrib);

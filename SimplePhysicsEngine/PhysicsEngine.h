@@ -19,11 +19,10 @@ namespace SimplePhysicsEngine
     {
         Transform transform;
         RigidBody rigidBody;
-        AABB aabb;
         MeshCollider collider;
 
-        PhysicsData(Transform transform, RigidBody rigidBody, AABB aabb, MeshCollider collider)
-            :transform(transform), rigidBody(rigidBody), aabb(aabb), collider(collider)
+        PhysicsData(Transform transform, RigidBody rigidBody, MeshCollider collider)
+            :transform(transform), rigidBody(rigidBody), collider(collider)
         {}        
     };
 

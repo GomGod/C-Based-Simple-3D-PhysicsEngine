@@ -107,8 +107,8 @@ namespace SimplePhysicsEngine
         {
             for (auto j = i + 1; j < simulateBuffer.size(); ++j)
             {
-                AABB worldPosAABB1 = simulateBuffer[i].aabb + simulateBuffer[i].transform.position;
-                AABB worldPosAABB2 = simulateBuffer[j].aabb + simulateBuffer[j].transform.position;
+                AABB worldPosAABB1 = simulateBuffer[i].collider.aabb + simulateBuffer[i].transform.position;
+                AABB worldPosAABB2 = simulateBuffer[j].collider.aabb + simulateBuffer[j].transform.position;
 
                 if (worldPosAABB1.TestAABBCollision(worldPosAABB2))
                 {                      
@@ -172,7 +172,7 @@ namespace SimplePhysicsEngine
 
     PhysicsData PhysicsEngine::PhysicsCopy(const Object& origin)
     {   
-        return SimplePhysicsEngine::PhysicsData(origin.GetTransform(), *origin.rigidBody, *origin.aabb, *origin.collider);
+        return SimplePhysicsEngine::PhysicsData(*origin.transform, *origin.rigidBody, *origin.collider);
     }
     
     bool PhysicsEngine::GJK(const MeshCollider* colliderA, utils::Vector3 posA, utils::Vector3 rotA, const MeshCollider* colliderB, utils::Vector3 posB, utils::Vector3 rotB)
@@ -181,9 +181,9 @@ namespace SimplePhysicsEngine
         MeshCollider wposColliderA = *colliderA;
         MeshCollider wposColliderB = *colliderB;        
         glm::mat4 rotationA = glm::mat4(1.0f);
-        rotationA = glm::rotate(rotationA, glm::radians(-rotA.x), glm::vec3(1, 0, 0));
+        rotationA = glm::rotate(rotationA, glm::radians(rotA.x), glm::vec3(-1, 0, 0));
         rotationA = glm::rotate(rotationA, glm::radians(rotA.y), glm::vec3(0, 1, 0));
-        rotationA = glm::rotate(rotationA, glm::radians(-rotA.z), glm::vec3(0, 0, 1));
+        rotationA = glm::rotate(rotationA, glm::radians(rotA.z), glm::vec3(0, 0, -1));
         
         for (auto& vertex : wposColliderA.colliderVertices)
         {
@@ -196,9 +196,9 @@ namespace SimplePhysicsEngine
         wposColliderA = wposColliderA + posA; //translate
         
         glm::mat4 rotationB = glm::mat4(1.0f);
-        rotationB = glm::rotate(rotationB, glm::radians(-rotB.x), glm::vec3(1, 0, 0));
+        rotationB = glm::rotate(rotationB, glm::radians(rotB.x), glm::vec3(-1, 0, 0));
         rotationB = glm::rotate(rotationB, glm::radians(rotB.y), glm::vec3(0, 1, 0));
-        rotationB = glm::rotate(rotationB, glm::radians(-rotB.z), glm::vec3(0, 0, 1));
+        rotationB = glm::rotate(rotationB, glm::radians(rotB.z), glm::vec3(0, 0, -1));
 
         for (auto& vertex : wposColliderB.colliderVertices)
         {
@@ -609,7 +609,10 @@ namespace SimplePhysicsEngine
             PhysicsData& aPhysicsData = simulateBuffer[cInfo.aInd];
             PhysicsData& bPhysicsData = simulateBuffer[cInfo.bInd];
 
-            utils::Vector3 resolution = cInfo.normal * cInfo.depth;
+            utils::Vector3 resolution = cInfo.normal * cInfo.depth;           
+
+            if (!aPhysicsData.rigidBody.isKinematic && !bPhysicsData.rigidBody.isKinematic)
+                resolution = resolution / 2.0f;
 
             if (!aPhysicsData.rigidBody.isKinematic)
                 aPhysicsData.transform.position -= resolution;

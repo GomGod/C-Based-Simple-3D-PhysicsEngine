@@ -32,13 +32,17 @@ namespace utils
         Vector3& operator -=(const Vector3& v);
         Vector3& operator *=(float i);
         Vector3& operator /=(float i);
-
+        
+        
         float GetVectorSize() const;
         float GetMagnitude() const;
+
+        static Vector3 Lerp(Vector3 depart, Vector3 dest, float rate);
         static float GetDistance(Vector3 v1, Vector3 v2);
         static Vector3 Normalize(Vector3& v);
         static float DotProduct(const Vector3& v1, const Vector3& v2);
-        static Vector3 CrossProduct(const Vector3& v1, const Vector3& v2); //External Product
+        static Vector3 CrossProduct(const Vector3& v1, const Vector3& v2);
+
         friend std::ostream& operator<<(std::ostream& os, const Vector3& v);
     };
 }

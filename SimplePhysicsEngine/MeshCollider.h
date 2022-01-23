@@ -1,12 +1,12 @@
 #pragma once
 #include<vector>
 #include"Vector3.h"
+#include"AABB.h"
 
 class MeshCollider
-{
-private:
-	
+{	
 public:	
+	AABB aabb;
 	std::vector<utils::Vector3> colliderVertices;
 	utils::Vector3 FindFurthestPoint(utils::Vector3 dir) const;
 	void BuildColliderVertices(float* vertices, int count);

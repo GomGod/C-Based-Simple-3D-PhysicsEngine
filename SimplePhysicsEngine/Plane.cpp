@@ -48,6 +48,5 @@ namespace SimplePhysicsEngine
 		AddNormal(0, -1.0f, 0);
 
 		BuildInterleavedVertices();
-		UpdateAABB();
 	}
 }
