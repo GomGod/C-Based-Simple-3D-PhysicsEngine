@@ -67,10 +67,11 @@ int main()
 	AddSphereToPhysicsWorld(transform, rigidBody, material, 1.0f, 36, 18);
 
 	//add plane(ground)
-	transform = new SimplePhysicsEngine::Transform(glm::vec3(0,-30.0f, 0), glm::vec3(25.0f, 25.0f, 25.0f));
+	//transform = new SimplePhysicsEngine::Transform(glm::vec3(0,-30.0f, 0));
+	transform = new SimplePhysicsEngine::Transform(glm::vec3(0,-30.0f, 0), glm::vec3(-10.0f, 0.0f, 0.0f));
 	rigidBody = new SimplePhysicsEngine::RigidBody(10.0f, 0.0f, zero, zero, true);
 	material = new SimplePhysicsEngine::Material(defaultShader, glm::vec4(0.7f, 0.7f, 0.7f,1));
-	AddPlaneToPhyscisWorld(transform, rigidBody, material, 100.0f, 100.0f, 1.0f);
+	AddPlaneToPhyscisWorld(transform, rigidBody, material, 100.0f, 100.0f, 30.0f);
 		
 	//rendering loop
 	while (!glfwWindowShouldClose(window))
@@ -100,7 +101,7 @@ int main()
 		auto objects = pEngine.GetLatestBuffer();
 		for (SimplePhysicsEngine::Object* obj : objects)
 		{
-			obj->Draw(camera.Position, view, projection);
+			obj->Draw(camera.Position, view, projection);			
 		}
 		//Objects
 
@@ -119,16 +120,17 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		SimplePhysicsEngine::Transform* transform1 = new SimplePhysicsEngine::Transform();
 		SimplePhysicsEngine::RigidBody* rigidBody1 = new SimplePhysicsEngine::RigidBody();
 		SimplePhysicsEngine::Material* material1 = new SimplePhysicsEngine::Material(defaultShader, glm::vec4(0.8f, 0.1f, 0.1f,1.0f));
-		rigidBody1->velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-		//rigidBody1->velocity = glm::vec3(0.25f, 0.5f, 0.25f);
-		AddSphereToPhysicsWorld(transform1, rigidBody1, material1, 0.5f, 36, 18);
+		//rigidBody1->velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+		//rigidBody1->mass = 25.0f;
+		rigidBody1->velocity = glm::vec3(2.5f, 5.0f, 2.5f);
+		AddSphereToPhysicsWorld(transform1, rigidBody1, material1, 1.5f, 36, 18);
 		
-		/*SimplePhysicsEngine::Transform* transform2 = new SimplePhysicsEngine::Transform();
+		SimplePhysicsEngine::Transform* transform2 = new SimplePhysicsEngine::Transform();
 		transform2->position = glm::vec3(5.0f, 0.0f, 5.0f);
 		SimplePhysicsEngine::RigidBody* rigidBody2 = new SimplePhysicsEngine::RigidBody();
-		SimplePhysicsEngine::Material* material2 = new SimplePhysicsEngine::Material(defaultShader, glm::vec3(0.1f, 0.1f, 0.8f));		
-		rigidBody2->velocity = glm::vec3(-0.25f, 0.5f, -0.25f);
-		AddSphereToPhysicsWorld(transform2, rigidBody2, material2, 0.5f, 36, 18);*/
+		SimplePhysicsEngine::Material* material2 = new SimplePhysicsEngine::Material(defaultShader, glm::vec4(0.1f, 0.1f, 0.8f, 1.0f));		
+		rigidBody2->velocity = glm::vec3(-2.5f, 5.0f, -2.5f);
+		AddSphereToPhysicsWorld(transform2, rigidBody2, material2, 1.5f, 36, 18);
 	}
 }
 

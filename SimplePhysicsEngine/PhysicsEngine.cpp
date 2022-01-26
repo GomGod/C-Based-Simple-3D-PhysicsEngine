@@ -26,7 +26,7 @@ namespace SimplePhysicsEngine
             auto& tf = simulateBuffer[i].transform;
 
 
-            rb.forces += defaultGravity;                        
+            rb.forces += defaultGravity *rb.mass;
             rb.velocity += rb.forces / rb.mass * dt;
             tf.position += rb.velocity * dt;
             
@@ -34,6 +34,11 @@ namespace SimplePhysicsEngine
             rb.forces.y = 0;
             rb.forces.z = 0;
         }   
+
+        vector<Collisions>().swap(collisions);//clear
+        vector<CollisionPoints>().swap(collisionInfos);
+        PreDetectCollision();
+        SecondDetectCollision();
 
         //update latestBuffer
         lBufferLock.lock();
@@ -45,10 +50,7 @@ namespace SimplePhysicsEngine
             latestBuffer[i]->UpdatePhysics(rb.velocity, rb.forces);
             latestBuffer[i]->UpdateTranform(tf.position, tf.rotation);
         }
-
-        PreDetectCollision();
-        SecondDetectCollision();
-
+        
         sBufferLock.unlock();
         lBufferLock.unlock();               
     }
@@ -103,7 +105,7 @@ namespace SimplePhysicsEngine
 
     void PhysicsEngine::PreDetectCollision()
     {
-        vector<Collisions>().swap(collisions); // clear
+        
 
         for (auto i = 0; i < simulateBuffer.size(); ++i)
         {
@@ -122,16 +124,15 @@ namespace SimplePhysicsEngine
     }
         
     void PhysicsEngine::SecondDetectCollision()
-    {   
-        vector<CollisionPoints>().swap(collisionInfos);
-        for (auto i = 0; i < collisions.size(); ++i)
+    {           
+        for (auto cInfo : collisions)
         {
-            if (GJK(&simulateBuffer[collisions[i].aInd].collider, simulateBuffer[collisions[i].aInd].transform.position, simulateBuffer[collisions[i].aInd].transform.rotation,
-                &simulateBuffer[collisions[i].bInd].collider, simulateBuffer[collisions[i].bInd].transform.position, simulateBuffer[collisions[i].bInd].transform.rotation))
-            {                
+            if (GJK(&simulateBuffer[cInfo.aInd].collider, simulateBuffer[cInfo.aInd].transform,
+                &simulateBuffer[cInfo.bInd].collider, simulateBuffer[cInfo.bInd].transform))
+            {                   
                 auto& colData = collisionInfos.back();
-                colData.aInd = collisions[i].aInd;
-                colData.bInd = collisions[i].bInd;
+                colData.aInd = cInfo.aInd;
+                colData.bInd = cInfo.bInd;
             }
         }
     }
@@ -163,7 +164,7 @@ namespace SimplePhysicsEngine
         while (true)
         {
             clock_t currentfr = clock();
-            dt = (float)(currentfr - lastfr) * 0.05f;
+            dt = (float)(currentfr - lastfr) * 0.02f;
             lastfr = currentfr;   
             removeObjectsAtWaitingQueue();
             AddObjectsAtWaitingQueue();
@@ -177,44 +178,36 @@ namespace SimplePhysicsEngine
         return SimplePhysicsEngine::PhysicsData(*origin.transform, *origin.rigidBody, *origin.collider);
     }
     
-    bool PhysicsEngine::GJK(const MeshCollider* colliderA, glm::vec3 posA, glm::vec3 rotA, const MeshCollider* colliderB, glm::vec3 posB, glm::vec3 rotB)
+    bool PhysicsEngine::GJK(const MeshCollider* colliderA, Transform tfColliderA, const MeshCollider* colliderB, Transform tfColliderB)
     {   
         //Transform Colliders
         MeshCollider wposColliderA = *colliderA;
-        MeshCollider wposColliderB = *colliderB;        
-        glm::mat4 rotationA = glm::mat4(1.0f);
-        rotationA = glm::rotate(rotationA, glm::radians(rotA.x), glm::vec3(-1, 0, 0));
-        rotationA = glm::rotate(rotationA, glm::radians(rotA.y), glm::vec3(0, 1, 0));
-        rotationA = glm::rotate(rotationA, glm::radians(rotA.z), glm::vec3(0, 0, -1));
-        
+        MeshCollider wposColliderB = *colliderB;
+               
+        glm::mat4 tfMatrix = glm::mat4(1.0f);
+        tfMatrix = glm::translate(tfMatrix, tfColliderA.position) * glm::mat4_cast(tfColliderA.rotation);        
         for (auto& vertex : wposColliderA.colliderVertices)
-        {
-            glm::vec4 rotVertex = glm::vec4(vertex.x, vertex.y, vertex.z, 1.0f) * rotationA;
-            vertex.x = rotVertex.x;
-            vertex.y = rotVertex.y;
-            vertex.z = rotVertex.z;
-           
-        }//rotate        
-        wposColliderA = wposColliderA + posA; //translate
-        
-        glm::mat4 rotationB = glm::mat4(1.0f);
-        rotationB = glm::rotate(rotationB, glm::radians(rotB.x), glm::vec3(-1, 0, 0));
-        rotationB = glm::rotate(rotationB, glm::radians(rotB.y), glm::vec3(0, 1, 0));
-        rotationB = glm::rotate(rotationB, glm::radians(rotB.z), glm::vec3(0, 0, -1));
+        {        
+            glm::vec4 tfVertex = tfMatrix * glm::vec4(vertex, 1.0f);
+            vertex.x = tfVertex.x;
+            vertex.y = tfVertex.y;
+            vertex.z = tfVertex.z;                   
+        }        
+                
+        tfMatrix = glm::mat4(1.0f);
+        tfMatrix = glm::translate(tfMatrix, tfColliderB.position) * glm::mat4_cast(tfColliderB.rotation);
 
         for (auto& vertex : wposColliderB.colliderVertices)
-        {
-            glm::vec4 rotVertex = glm::vec4(vertex.x, vertex.y, vertex.z, 1.0f) * rotationB;
-            vertex.x = rotVertex.x;
-            vertex.y = rotVertex.y;
-            vertex.z = rotVertex.z;
-        }//rotate
-        wposColliderB = wposColliderB + posB; //translate
-
+        {            
+            glm::vec4 tfVertex = tfMatrix * glm::vec4(vertex, 1.0f);
+            vertex.x = tfVertex.x;
+            vertex.y = tfVertex.y;
+            vertex.z = tfVertex.z;
+        }
 
         //initial support pnt
         glm::vec3 dir = glm::vec3{ 1,0,0 };
-        glm::vec3 support = Support(&wposColliderA, &wposColliderB, dir);
+        glm::vec3 support = MeshCollider::Support(&wposColliderA, &wposColliderB, dir);
         Simplex points;
         points.Push(support);
 
@@ -222,7 +215,7 @@ namespace SimplePhysicsEngine
         dir = -support;
         while (true)
         {
-            support = Support(&wposColliderA, &wposColliderB, dir);                        
+            support = MeshCollider::Support(&wposColliderA, &wposColliderB, dir);
             if (glm::dot(support, dir) <=0)                
             {              
                 return false;
@@ -231,17 +224,12 @@ namespace SimplePhysicsEngine
             
             if (NextSimplex(points, dir))
             {
-                auto collisionData = EPA(points, &wposColliderA, &wposColliderB);                
-                collisionInfos.emplace_back(collisionData);                
+                auto collisionData = EPA(points, &wposColliderA, &wposColliderB);                  
+                collisionInfos.emplace_back(collisionData);
                 return true;
             }
         }
-    }
-
-    glm::vec3 PhysicsEngine::Support(const MeshCollider* colliderA, const MeshCollider* colliderB, glm::vec3 dir)
-    {
-        return colliderA->FindFurthestPoint(dir) - colliderB->FindFurthestPoint(-dir);
-    }
+    }    
 
     bool PhysicsEngine::NextSimplex(Simplex& points, glm::vec3& dir)
     {
@@ -266,12 +254,10 @@ namespace SimplePhysicsEngine
 
         auto ab = b - a;
         auto ao = -a;
-
+                
         if (SameDirection(ab, ao))
         {            
-            dir = glm::cross(ab, ao);
-            dir = glm::cross(ab, ao);
-            dir = glm::cross(dir, ab);
+            dir = glm::cross(glm::cross(ab, ao), ab);
         }
         else
         {
@@ -299,8 +285,7 @@ namespace SimplePhysicsEngine
             if (SameDirection(ac, ao))
             {
                 points = { a,c };
-                dir = glm::cross(ac, ao);
-                dir = glm::cross(dir, ac);
+                dir = glm::cross(glm::cross(ac, ao), ac);                
             }
             else
             {
@@ -373,7 +358,7 @@ namespace SimplePhysicsEngine
             0,3,1,
             0,2,3,
             1,3,2
-        }; //사면체 각 면의 polygon draw 순서
+        };
 
         auto faceNormalData = GetFaceNormals(polytope, faces);        
         auto normals = faceNormalData.first;
@@ -393,7 +378,7 @@ namespace SimplePhysicsEngine
                 break;
             }
 
-            glm::vec3 support = Support(colliderA, colliderB, minNormal);
+            glm::vec3 support = MeshCollider::Support(colliderA, colliderB, minNormal);
             float sDist = glm::dot(minNormal, support);
 
             if (abs(sDist - minDistance) > 0.001f)
@@ -479,9 +464,8 @@ namespace SimplePhysicsEngine
             auto a = polytope[faces[i]];
             auto b = polytope[faces[i+1]];
             auto c = polytope[faces[i+2]];
-
-            auto cross = glm::cross((b - a), (c - a));
-            auto normal = glm::normalize(cross);
+                        
+            auto normal = glm::normalize(glm::cross((b - a), (c - a)));
             float dist = glm::dot(normal, a);
 
             if (dist < 0)
@@ -608,15 +592,15 @@ namespace SimplePhysicsEngine
             PhysicsData& aPhysicsData = simulateBuffer[cInfo.aInd];
             PhysicsData& bPhysicsData = simulateBuffer[cInfo.bInd];
 
-            glm::vec3 resolution = cInfo.normal * cInfo.depth;           
+            glm::vec3 resolution = -cInfo.normal * cInfo.depth;           
 
             if (!aPhysicsData.rigidBody.isKinematic && !bPhysicsData.rigidBody.isKinematic)
-                resolution = resolution / 2.0f;
+                resolution = resolution * 0.5f;
 
             if (!aPhysicsData.rigidBody.isKinematic)
-                aPhysicsData.transform.position -= resolution;
+                aPhysicsData.transform.position += resolution;
             if (!bPhysicsData.rigidBody.isKinematic)
-                bPhysicsData.transform.position += resolution;
-        }
+                bPhysicsData.transform.position -= resolution;
+        } 
     }
 }

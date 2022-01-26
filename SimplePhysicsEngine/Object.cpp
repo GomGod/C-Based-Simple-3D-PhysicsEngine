@@ -4,11 +4,10 @@ namespace SimplePhysicsEngine
 {   
     void Object::BuildInterleavedVertices()
     {
-        std::vector<float>().swap(interleavedVertexAttrib);
-
+        std::vector<float>().swap(interleavedVertexAttrib);        
         std::size_t i, j;
         std::size_t count = vertices.size();
-        for (i = 0, j = 0; i < count; i += 3, j += 2)
+        for (i = 0, j = 0; i+2 < count; i += 3, j += 3)
         {
             interleavedVertexAttrib.push_back(vertices[i]);
             interleavedVertexAttrib.push_back(vertices[i + 1]);
@@ -107,9 +106,37 @@ namespace SimplePhysicsEngine
         glEnableVertexAttribArray(1);
 
         glBindVertexArray(0); // Unbind VAO        
+
+        glGenVertexArrays(1, &colVAO); //Gen VAO
+        glBindVertexArray(colVAO); // Bind VAO
+
+        //Set Vertex Data
+        glGenBuffers(1, &colVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, colVBO);
+
+        std::vector<float> colliderData;
+        int i = 0;
+        for (auto a : collider->colliderVertices)
+        {
+            colliderData.push_back(a.x);
+            colliderData.push_back(a.y);
+            colliderData.push_back(a.z);
+        }
+
+        glBufferData(GL_ARRAY_BUFFER, colliderData.size() * sizeof(float), colliderData.data(), GL_STATIC_DRAW);
+        //Set Draw Indicies
+        //glGenBuffers(1, &EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetIndexSize(), GetIndicies(), GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);        
+        
+        //Enable Vertex Attributes
+        glEnableVertexAttribArray(0);        
+        glBindVertexArray(0); // Unbind VAO        
     }
 
-    void Object::UpdateTranform(glm::vec3 position, glm::vec3 rotation)
+    void Object::UpdateTranform(glm::vec3 position, glm::quat rotation)
     {
         transform->position = position;
         transform->rotation = rotation;
@@ -135,12 +162,23 @@ namespace SimplePhysicsEngine
         shader->SetVec3("material.specular", material->specular.x, material->specular.y, material->specular.z);
         shader->SetVec3("material.color", material->color.x, material->color.y, material->color.z);
         glm::mat4 model = glm::mat4(1.0);                        
-        model = glm::translate(model, glm::vec3(transform->position.x, transform->position.y, transform->position.z));        
-        model = glm::rotate(model, glm::radians(transform->rotation.x), glm::vec3(1, 0, 0));
-        model = glm::rotate(model, glm::radians(transform->rotation.y), glm::vec3(0, 1, 0));
-        model = glm::rotate(model, glm::radians(transform->rotation.z), glm::vec3(0, 0, 1));
+        auto translateMat = glm::mat4(1.0);
+        auto rotationMat = glm::mat4_cast(transform->rotation);
+        auto scaleMat = glm::mat4(1.0);
+        model = glm::translate(translateMat, transform->position)
+            * glm::mat4_cast(transform->rotation) * scaleMat;
         shader->SetMat4("model", model);
 
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glDrawElements(GL_TRIANGLES, GetIndexCount(), GL_UNSIGNED_INT, (void*)0);       
+
+        glBindVertexArray(colVAO);
+        shader->SetVec3("material.color", 0.0f, 1.0f, 0.0f);
+        scaleMat = glm::scale(scaleMat, glm::vec3(1.005f));
+        model = glm::translate(translateMat, transform->position)
+            * glm::mat4_cast(transform->rotation) * scaleMat;
+        shader->SetMat4("model", model);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glDrawElements(GL_TRIANGLES, GetIndexCount(), GL_UNSIGNED_INT, (void*)0);
     }    
 }

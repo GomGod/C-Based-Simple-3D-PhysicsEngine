@@ -18,9 +18,9 @@ namespace SimplePhysicsEngine
     struct Transform
     {
         glm::vec3 position;
-        glm::vec3 rotation;
+        glm::quat rotation;
     
-        Transform(glm::vec3 position = glm::vec3(0), glm::vec3 rotation = glm::vec3(0))
+        Transform(glm::vec3 position = glm::vec3(0), glm::quat rotation = glm::quat(1.0f,0,0,0))
         {
             this->position = position;
             this->rotation = rotation;
@@ -82,7 +82,7 @@ namespace SimplePhysicsEngine
             delete aabb;
         }
 
-        void Object::UpdateTranform(glm::vec3 position, glm::vec3 rotation);
+        void Object::UpdateTranform(glm::vec3 position, glm::quat rotation);
         void Object::UpdatePhysics(glm::vec3 velocity, glm::vec3 forces);
 
         //Rendering for OpenGL   
@@ -127,6 +127,7 @@ namespace SimplePhysicsEngine
 
         void BuildVAO();
         unsigned int VAO, VBO, EBO;        
+        unsigned int colVAO, colVBO, colEBO;
     };
 };
 

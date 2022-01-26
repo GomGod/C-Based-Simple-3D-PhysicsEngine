@@ -48,7 +48,7 @@ namespace SimplePhysicsEngine
     class PhysicsEngine 
     {
     private:
-        glm::vec3 defaultGravity{ 0,-0.098f,0 };
+        glm::vec3 defaultGravity{ 0,-0.98f,0 };
         std::thread physicsThread;
                 
 //critical section
@@ -73,8 +73,7 @@ namespace SimplePhysicsEngine
         void PreDetectCollision();
         void SecondDetectCollision();
 
-        bool GJK(const MeshCollider* colliderA, glm::vec3 posA, glm::vec3 rotA, const MeshCollider* colliderB, glm::vec3 posB, glm::vec3 rotB);
-        glm::vec3 Support(const MeshCollider* colliderA, const MeshCollider* colliderB, glm::vec3 dir);
+        bool PhysicsEngine::GJK(const MeshCollider* colliderA, Transform tfColliderA, const MeshCollider* colliderB, Transform tfColliderB);
         bool NextSimplex(Simplex& points, glm::vec3& dir);
         bool SameDirection(const glm::vec3& dir, const glm::vec3& ao);
         bool Line(Simplex& points, glm::vec3& dir);

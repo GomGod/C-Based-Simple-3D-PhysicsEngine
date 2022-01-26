@@ -1,11 +1,11 @@
 #include "MeshCollider.h"
-
+#include <iostream>
 glm::vec3 MeshCollider::FindFurthestPoint(glm::vec3 dir) const
 {
 	glm::vec3 maxCoord = glm::vec3(0);
 	float maxDist = -FLT_MAX;
 
-	for (glm::vec3 vertex : colliderVertices)
+	for (const glm::vec3& vertex : colliderVertices)
 	{
 		float distance = glm::dot(vertex, dir);			
 
@@ -21,10 +21,13 @@ glm::vec3 MeshCollider::FindFurthestPoint(glm::vec3 dir) const
 
 void MeshCollider::BuildColliderVertices(float* vertices, int count)
 {
+	std::vector<glm::vec3>().swap(colliderVertices);
+
 	float minX = FLT_MAX, maxX = FLT_MIN, minY = FLT_MAX, maxY = FLT_MIN, minZ = FLT_MAX, maxZ = FLT_MIN;
+	
 	for (auto i = 0; i + 2 < count; i += 3)
 	{
-		auto vertex = glm::vec3{ vertices[i],vertices[i + 1],vertices[i + 2] };
+		auto vertex = glm::vec3{ vertices[i],vertices[i + 1],vertices[i + 2] };		
 		colliderVertices.push_back(vertex);
 
 		if (minX > vertices[i]) minX = vertex.x;
@@ -65,4 +68,9 @@ MeshCollider& MeshCollider::operator+(const glm::vec3& pos) const
 	ret->colliderVertices = vertices;
 
 	return *ret;
+}
+
+glm::vec3 MeshCollider::Support(const MeshCollider* colliderA, const MeshCollider* colliderB, glm::vec3 dir)
+{
+	return colliderA->FindFurthestPoint(dir) - colliderB->FindFurthestPoint(-dir);
 }
