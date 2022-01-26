@@ -64,7 +64,7 @@ GJK를 수행할 때 오브젝트의 rotation 정보를 전달하여 변환행�
 
 ![asdf](https://user-images.githubusercontent.com/46223506/151125084-a2da8714-0c9a-47a9-bb15-8257100688c3.gif)   
 
-##### !Issue
+### !Issue
 **1. Tunneling - 속도가 빠른 물체가 재배치 되거나 delta time이 커지면 물체를 뚫고 지나가는 문제가 있음.**   
 AABB를 활용한 CCD 구현을 통해 어느정도 해결 가능 할 것으로 보임   
 **2. Object Rotation 대응 - 확대된 AABB 만으로는 모든 회전에 대한 대응이 어려움.(현재 해결중인 문제)**   
