@@ -53,9 +53,28 @@ Object class의 데이터를 기반으로 구 렌더링
 ![asdf](https://user-images.githubusercontent.com/46223506/150374570-2db3113c-70b0-41c0-8f9b-a68a55a10b27.gif)   
 Position Solver, Impulse Solver 적용   
 
+**~2022-01-26**   
+**자체 Vector class 삭제, glm 제공 클래스로 수정**   
+각 벡터, 행렬 연산의 완성도 개선 및 성능 개선   
+**Euler -> Quaternion 회전으로 수정**   
+성능 향상 및 짐벌락 문제 방지 목적   
+**Object Rotation 대응**   
+1. Rotate Matrix in GJK   
+GJK를 수행할 때 오브젝트의 rotation 정보를 전달하여 변환행렬 생성 후 변환된 Collider에 대해 충돌 검사를 수행하도록 수정   
+
+![asdf](https://user-images.githubusercontent.com/46223506/151125084-a2da8714-0c9a-47a9-bb15-8257100688c3.gif)   
+
 ###### !Issue
-1. Frame drop - 오브젝트가 조금만 늘어도 프레임 드랍이 체감되는 수준 => delta time 적용으로 어느 정도 해소
-2. Tunneling - 속도가 빠른 물체가 재배치 되거나 delta time이 커지면 물체를 뚫고 지나가는 문제가 있음.
-=>AABB를 활용한 CCD 구현을 통해 어느정도 해결 가능 할 것으로 보임
+**1. Tunneling - 속도가 빠른 물체가 재배치 되거나 delta time이 커지면 물체를 뚫고 지나가는 문제가 있음.**   
+AABB를 활용한 CCD 구현을 통해 어느정도 해결 가능 할 것으로 보임
+**2. Object Rotation 대응 - 확대된 AABB 만으로는 모든 회전에 대한 대응이 어려움.(현재 해결중인 문제)**   
+대안1. 회전 시 새로운 AABB 계산
+새로운 AABB를 구하는 것은 비용이 너무 큼. 특히 돌림힘으로 인해 지속적으로 회전이 변하므로 매 프레임 AABB가 다시 계산된다고 볼 수 있음.   
+대안 2. 사전검사 제거   
+성능저하가 매우 심함.   
+대안 3. Bounding Sphere   
+사전검사의 의미가 사실상 없는 수준인 경우가 많아짐.   
+대안 4. 저비용 AABB 재계산   
+삼각함수를 활용하여 최초 계산된 AABB를 기준으로 대략적인 AABB를 재계산하는 방안을 구현 중.
 
 C++ Based 3D Physics Engine
