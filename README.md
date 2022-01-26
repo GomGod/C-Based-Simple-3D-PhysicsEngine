@@ -75,6 +75,11 @@ AABB를 활용한 CCD 구현을 통해 어느정도 해결 가능 할 것으로 
 -대안 3. Bounding Sphere   
 사전검사의 의미가 사실상 없는 수준인 경우가 많아짐.   
 -대안 4. 저비용 AABB 재계산   
-삼각함수를 활용하여 최초 계산된 AABB를 기준으로 대략적인 AABB를 재계산하는 방안을 구현 중.
+AABB를 재계산하는 비용을 줄이는 방안을 구상 중.
+(기록용)
+![image](https://user-images.githubusercontent.com/46223506/151185863-98e0aff2-3068-463b-b444-482b9ec281ed.png)   
+![image](https://user-images.githubusercontent.com/46223506/151185902-128910f0-c1ee-45cf-88bf-7ab63e63a5b4.png)   
+
+
 
 C++ Based 3D Physics Engine
