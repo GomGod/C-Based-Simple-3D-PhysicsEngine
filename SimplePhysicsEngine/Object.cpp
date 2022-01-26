@@ -38,9 +38,10 @@ namespace SimplePhysicsEngine
 
     void Object::AddNormal(float x, float y, float z)
     {
-        normals.push_back(x);
-        normals.push_back(y);
-        normals.push_back(z);
+        glm::vec3 norm = glm::normalize(glm::vec3(x, y, z));
+        normals.push_back(norm.x);
+        normals.push_back(norm.y);
+        normals.push_back(norm.z);
     }
 
     void Object::AddIndices(unsigned int i1, unsigned int i2, unsigned int i3)

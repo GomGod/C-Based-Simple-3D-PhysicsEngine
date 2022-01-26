@@ -38,29 +38,31 @@ namespace SimplePhysicsEngine
 
 		//side
 		AddIndices(1, 3, 5);
-		AddIndices(5, 7, 3);
+		AddIndices(5, 7, 3); //front
 
 		AddIndices(7, 6, 3);
-		AddIndices(3, 6, 2);
+		AddIndices(3, 6, 2); //left
 
 		AddIndices(0, 2, 4);
-		AddIndices(4, 6, 2);
+		AddIndices(4, 6, 2); //back
 
 		AddIndices(0, 4, 1);
-		AddIndices(1, 5, 4);
+		AddIndices(1, 5, 4); //right
+
+		//top side
+		AddNormal(-1, 1, -1); //lu
+		AddNormal(-1, 1, 1); //ld
+		AddNormal(1, 1, -1); //ru
+		AddNormal(1, 1, 1); //rd
+
+		//bot side
+		AddNormal(-1, -1, -1); //lu
+		AddNormal(-1, -1, 1); //ld
+		AddNormal(1, -1, -1); //ru
+		AddNormal(1, -1, 1); //rd
 
 
-		glm::vec3 normal = glm::normalize(glm::vec3(1, 1, 1));
 
-		AddNormal(-normal.x, normal.y, normal.z);
-		AddNormal(-normal.x, normal.y, -normal.z);
-		AddNormal(normal.x, normal.y, normal.z);
-		AddNormal(normal.x, normal.y, -normal.z);
-
-		AddNormal(-normal.x, -normal.y, normal.z);
-		AddNormal(-normal.x, -normal.y, -normal.z);
-		AddNormal(normal.x, -normal.y, normal.z);
-		AddNormal(normal.x, -normal.y, -normal.z);
 
 		BuildInterleavedVertices();
 	}

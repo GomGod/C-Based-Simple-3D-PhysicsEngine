@@ -54,7 +54,7 @@ int main()
 
 	defaultShader = &ourShader;
 
-	glm::vec3 lightPos(10.0f, 10.0f, 10.0f);
+	glm::vec3 lightPos(-30.0f, 30.0f, -30.0f);
 	ourShader.use();	
 	ourShader.SetVec3("light.lightColor", 1.0f, 1.0f, 1.0f);
 	ourShader.SetVec3("light.lightPos", lightPos.x, lightPos.y, lightPos.z);

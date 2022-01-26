@@ -8,23 +8,17 @@ namespace SimplePhysicsEngine
     vector<CollisionPoints> collisionInfos;
     std::vector<Collisions> collisions;
 
-    void PhysicsEngine::UpdatePhysics(float dt) {
-        //collision detection (test)
-        sBufferLock.lock();        
-        //resolve collisions
-        if (collisionInfos.size())
-        {
-            PositionSolver(dt);
-            ImpulseSolver(dt);
-        }
+    void PhysicsEngine::UpdatePhysics(float dt) 
+    {
         
+        sBufferLock.lock();
+                
         //adjust world forces 
         for (auto i=0; i < simulateBuffer.size(); i+=1)
         {            
             auto& rb = simulateBuffer[i].rigidBody;
             if (rb.isKinematic) continue;
             auto& tf = simulateBuffer[i].transform;
-
 
             rb.forces += defaultGravity *rb.mass;
             rb.velocity += rb.forces / rb.mass * dt;
@@ -33,12 +27,20 @@ namespace SimplePhysicsEngine
             rb.forces.x = 0;
             rb.forces.y = 0;
             rb.forces.z = 0;
-        }   
+        }           
 
+        //collision detection
         vector<Collisions>().swap(collisions);//clear
         vector<CollisionPoints>().swap(collisionInfos);
         PreDetectCollision();
         SecondDetectCollision();
+
+        //resolve collisions
+        if (collisionInfos.size())
+        {
+            PositionSolver(dt);
+            ImpulseSolver(dt);
+        }
 
         //update latestBuffer
         lBufferLock.lock();
@@ -50,7 +52,7 @@ namespace SimplePhysicsEngine
             latestBuffer[i]->UpdatePhysics(rb.velocity, rb.forces);
             latestBuffer[i]->UpdateTranform(tf.position, tf.rotation);
         }
-        
+
         sBufferLock.unlock();
         lBufferLock.unlock();               
     }
@@ -104,9 +106,7 @@ namespace SimplePhysicsEngine
     }
 
     void PhysicsEngine::PreDetectCollision()
-    {
-        
-
+    {        
         for (auto i = 0; i < simulateBuffer.size(); ++i)
         {
             for (auto j = i + 1; j < simulateBuffer.size(); ++j)
@@ -164,7 +164,7 @@ namespace SimplePhysicsEngine
         while (true)
         {
             clock_t currentfr = clock();
-            dt = (float)(currentfr - lastfr) * 0.02f;
+            dt = (float)(currentfr - lastfr) * 0.01f;
             lastfr = currentfr;   
             removeObjectsAtWaitingQueue();
             AddObjectsAtWaitingQueue();
