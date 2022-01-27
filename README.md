@@ -59,17 +59,20 @@ Position Solver, Impulse Solver 적용
 **Euler -> Quaternion 회전으로 수정**   
 성능 향상 및 짐벌락 문제 방지 목적   
 **Object Rotation 대응**   
-1. Rotate Matrix in GJK   
+Rotate Matrix in GJK   
 GJK를 수행할 때 오브젝트의 rotation 정보를 전달하여 변환행렬 생성 후 변환된 Collider에 대해 충돌 검사를 수행하도록 수정   
-
-![asdf](https://user-images.githubusercontent.com/46223506/151125084-a2da8714-0c9a-47a9-bb15-8257100688c3.gif)   
 
 **2022-01-27**   
 AABB 회전 대응   
+단순히 확대된 AABB는 회전에 대해 충분히 처리할 수 없고 Bounding Sphere보다 나은 점이 없기 대문에 적절한 비용으로 AABB를 재계산하는 방법이 필요했음.   
+   
 AABB정보를 통해 얻을 수 있는 팔면체 vertex는 항상 오브젝트를 포함한다는 점에 주목함.   
 AABB를 회전변환한 BOX의 AABB는 변환된 오브젝트의 AABB를 항상 포함함.   
 물론 그렇게 구해진 AABB는 회전한 오브젝트에 대해 비교적 부정확한 AABB지만,   
 많은 vertex를 순회하면서 정확한 AABB를 구하는 비용에 비하면 훨씬 싸게 먹힌다는 장점이 있음.   
+![collisiontest](https://user-images.githubusercontent.com/46223506/151356605-649cefc9-6fa2-4873-913c-8b5c5e1489c7.gif)   
+
+
 
 ### !Issue
 **1. Tunneling - 속도가 빠른 물체가 재배치 되거나 delta time이 커지면 물체를 뚫고 지나가는 문제가 있음.**   
