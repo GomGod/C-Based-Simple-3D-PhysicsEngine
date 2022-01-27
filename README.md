@@ -64,21 +64,16 @@ GJK를 수행할 때 오브젝트의 rotation 정보를 전달하여 변환행�
 
 ![asdf](https://user-images.githubusercontent.com/46223506/151125084-a2da8714-0c9a-47a9-bb15-8257100688c3.gif)   
 
+**2022-01-27**   
+AABB 회전 대응   
+AABB정보를 통해 얻을 수 있는 팔면체 vertex는 항상 오브젝트를 포함한다는 점에 주목함.   
+AABB를 회전변환한 BOX의 AABB는 변환된 오브젝트의 AABB를 항상 포함함.   
+물론 그렇게 구해진 AABB는 회전한 오브젝트에 대해 비교적 부정확한 AABB지만,   
+많은 vertex를 순회하면서 정확한 AABB를 구하는 비용에 비하면 훨씬 싸게 먹힌다는 장점이 있음.   
+
 ### !Issue
 **1. Tunneling - 속도가 빠른 물체가 재배치 되거나 delta time이 커지면 물체를 뚫고 지나가는 문제가 있음.**   
 AABB를 활용한 CCD 구현을 통해 어느정도 해결 가능 할 것으로 보임   
-**2. Object Rotation 대응 - 확대된 AABB 만으로는 모든 회전에 대한 대응이 어려움.(현재 해결중인 문제)**   
--대안 1. 회전 시 새로운 AABB 계산
-새로운 AABB를 구하는 것은 비용이 너무 큼. 특히 돌림힘으로 인해 지속적으로 회전이 변하므로 매 프레임 AABB가 다시 계산된다고 볼 수 있음.   
--대안 2. 사전검사 제거   
-성능저하가 매우 심함.   
--대안 3. Bounding Sphere   
-사전검사의 의미가 사실상 없는 수준인 경우가 많아짐.   
--대안 4. 저비용 AABB 재계산   
-AABB를 재계산하는 비용을 줄이는 방안을 구상 중.
-(기록용)
-![image](https://user-images.githubusercontent.com/46223506/151185863-98e0aff2-3068-463b-b444-482b9ec281ed.png)   
-![image](https://user-images.githubusercontent.com/46223506/151313379-2c20bceb-a50a-4af9-baa7-21e6c6a101e0.png)   
 
 
 
