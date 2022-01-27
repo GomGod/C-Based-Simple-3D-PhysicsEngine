@@ -111,8 +111,8 @@ namespace SimplePhysicsEngine
         {
             for (auto j = i + 1; j < simulateBuffer.size(); ++j)
             {
-                AABB worldPosAABB1 = simulateBuffer[i].collider.aabb + simulateBuffer[i].transform.position;
-                AABB worldPosAABB2 = simulateBuffer[j].collider.aabb + simulateBuffer[j].transform.position;
+                AABB worldPosAABB1 = simulateBuffer[i].collider.aabb.ComputeRotatedObjectAABB(simulateBuffer[i].transform.rotation) + simulateBuffer[i].transform.position;
+                AABB worldPosAABB2 = simulateBuffer[j].collider.aabb.ComputeRotatedObjectAABB(simulateBuffer[j].transform.rotation) + simulateBuffer[j].transform.position;
 
                 if (worldPosAABB1.TestAABBCollision(worldPosAABB2))
                 {                      

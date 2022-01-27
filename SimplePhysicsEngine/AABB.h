@@ -10,10 +10,11 @@ public:
     float minY, maxY;
     float minZ, maxZ;
 
-    void ScaleRoot2();
     bool TestAABBCollision(const glm::vec3& point);
     bool TestAABBCollision(const AABB& box);
     AABB& operator+ (const glm::vec3& pos);
     AABB& operator& (const AABB& origin);    
+    
+    AABB ComputeRotatedObjectAABB(glm::quat rot);
 };
 

@@ -46,7 +46,6 @@ void MeshCollider::BuildColliderVertices(float* vertices, int count)
 	aabb.maxX = maxX;
 	aabb.maxY = maxY;
 	aabb.maxZ = maxZ;
-	aabb.ScaleRoot2();
 }
 
 MeshCollider& MeshCollider::operator()(const MeshCollider& origin)

@@ -68,7 +68,8 @@ int main()
 
 	//add plane(ground)
 	//transform = new SimplePhysicsEngine::Transform(glm::vec3(0,-30.0f, 0));
-	transform = new SimplePhysicsEngine::Transform(glm::vec3(0,-30.0f, 0), glm::vec3(-10.0f, 0.0f, 0.0f));
+	glm::vec3 eulerAngles = glm::vec3(glm::radians(-10.0f), glm::radians(-5.0f), glm::radians(-1.0f));
+	transform = new SimplePhysicsEngine::Transform(glm::vec3(0, -30.0f, 0), glm::quat(eulerAngles));
 	rigidBody = new SimplePhysicsEngine::RigidBody(10.0f, 0.0f, zero, zero, true);
 	material = new SimplePhysicsEngine::Material(defaultShader, glm::vec4(0.7f, 0.7f, 0.7f,1));
 	AddPlaneToPhyscisWorld(transform, rigidBody, material, 100.0f, 100.0f, 30.0f);
