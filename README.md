@@ -78,7 +78,7 @@ AABB를 활용한 CCD 구현을 통해 어느정도 해결 가능 할 것으로 
 AABB를 재계산하는 비용을 줄이는 방안을 구상 중.
 (기록용)
 ![image](https://user-images.githubusercontent.com/46223506/151185863-98e0aff2-3068-463b-b444-482b9ec281ed.png)   
-![image](https://user-images.githubusercontent.com/46223506/151307793-1f55520c-329e-488e-88a1-c686d73aa163.png)   
+![image](https://user-images.githubusercontent.com/46223506/151313379-2c20bceb-a50a-4af9-baa7-21e6c6a101e0.png)   
 
 
 
