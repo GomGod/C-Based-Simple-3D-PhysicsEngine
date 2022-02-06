@@ -14,20 +14,20 @@ namespace SimplePhysicsEngine
         sBufferLock.lock();
                 
         //adjust world forces 
-        for (auto i=0; i < simulateBuffer.size(); i+=1)
-        {            
+        for (auto i = 0; i < simulateBuffer.size(); i += 1)
+        {
             auto& rb = simulateBuffer[i].rigidBody;
             if (rb.isKinematic) continue;
             auto& tf = simulateBuffer[i].transform;
 
-            rb.forces += defaultGravity *rb.mass;
-            rb.velocity += rb.forces / rb.mass * dt;
+            rb.netForce += defaultGravity * rb.mass;
+            rb.velocity += rb.netForce * rb.getMassInverse() * dt;
+            rb.angularVelocity += rb.netTorque * rb.inertia * dt;
+
             tf.position += rb.velocity * dt;
-            
-            rb.forces.x = 0;
-            rb.forces.y = 0;
-            rb.forces.z = 0;
-        }           
+
+            rb.netForce = glm::vec3(0);
+        }
 
         //collision detection
         vector<Collisions>().swap(collisions);//clear
@@ -49,7 +49,7 @@ namespace SimplePhysicsEngine
             auto& rb = simulateBuffer[i].rigidBody;
             auto& tf = simulateBuffer[i].transform;
 
-            latestBuffer[i]->UpdatePhysics(rb.velocity, rb.forces);
+            latestBuffer[i]->UpdatePhysics(rb.velocity, rb.netForce);
             latestBuffer[i]->UpdateTranform(tf.position, tf.rotation);
         }
 

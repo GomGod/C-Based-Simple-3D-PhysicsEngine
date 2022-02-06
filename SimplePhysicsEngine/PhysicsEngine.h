@@ -48,7 +48,7 @@ namespace SimplePhysicsEngine
     class PhysicsEngine 
     {
     private:
-        glm::vec3 defaultGravity{ 0,-0.98f,0 };
+        glm::vec3 worldGravity{ 0,-0.98f,0 };
         std::thread physicsThread;
                 
 //critical section
