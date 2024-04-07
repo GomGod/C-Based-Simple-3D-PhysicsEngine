@@ -1,29 +1,8 @@
 # Cpp-Based-Simple-3D-Physics-Engine
 
 ## 1. 현황  
-22.02~현재 
-중단된 프로젝트 (개인 사정)  
-프로젝트 재개 시 본 레포가 아니라 새로 시작할 것 같음
-
-**2021-12-12** 
-1) 프로젝트 시작
-2) 물리엔진 기초 루틴 설계 (force 적용 -> 위치&가속도 재계산 -> 충돌감지 -> 처리(충돌 오브젝트, 겹치는 오브젝트 등) -> 결과 렌더링)
-3) 3D 벡터 객체 연산 정의 및 구현
-
-**2021-12-20**
-1) Physics World 구현 (중력 적용)
-2) IDE 변경 (CLion -> VS2022)
-
-![image](https://user-images.githubusercontent.com/46223506/146803365-e6c72aa2-a3ef-41e3-b035-a20a40540614.png)
-
-중력 시뮬레이션 결과
-
-**2021-12-21**
-1) 충돌 처리 설계   
-폐기
-   
-**2021-12-22 ~ 2022-01-10**
-물리 시뮬레이션 렌더링을 위한 OpenGL 학습
+22.02~ : 중단 (개인 사정)
+재개 시 처음부터 진행 예정
 
 **2022-01-10**   
 ![image](https://user-images.githubusercontent.com/46223506/148786982-a306a8da-907e-45b1-8579-57095c0ed812.png)   
@@ -73,7 +52,5 @@ AABB를 회전변환한 BOX의 AABB는 변환된 오브젝트의 AABB를 항상 
 물론 그렇게 구해진 AABB는 회전한 오브젝트에 대해 비교적 부정확한 AABB지만,   
 많은 vertex를 순회하면서 정확한 AABB를 구하는 비용에 비하면 훨씬 싸게 먹힌다는 장점이 있음.   
 ![collisiontest](https://user-images.githubusercontent.com/46223506/151356605-649cefc9-6fa2-4873-913c-8b5c5e1489c7.gif)   
-
-
 
 C++ Based 3D Physics Engine
